@@ -1,19 +1,18 @@
 #include "globals.h"
 
-void plotSignalRegions(TFile * f, TString outpath, TString histName, TString saveImageAs, TString plotTitle, TString XaxisLabel){  
+void plotSignalRegions(TFile * f, TString outpath, TString histName, TString plotTitle, TString XaxisLabel){  
   int numSR=5; //number of signal regions
-  TCanvas C;
-  gStyle->SetHistMinimumZero();  
   
   //create histos for different signal regions
   TH1D ** hist = new TH1D*[numSR];
   for(int i=0;i<numSR;i++){
     TString SR_idx=Form("%d",i);
-    if(! f->Get(histName+SR_idx)){ 
-      std::cout<<histName+SR_idx<<" not found"<<std::endl; 
-      continue; 
+    TString fullHistName = histName+"_SRB"+SR_idx; 
+    if(!f->Get(fullHistName)){ 
+      std::cout<<fullHistName<<" not found"<<std::endl; 
+      return; 
     }
-    hist[i] = (TH1D*)f->Get(histName+SR_idx);
+    hist[i] = (TH1D*)f->Get(fullHistName);
     hist[i]->GetXaxis()->SetTitle(XaxisLabel);
     hist[i]->SetLineColor(i+1); 
     hist[i]->SetFillStyle(0); 
@@ -21,25 +20,24 @@ void plotSignalRegions(TFile * f, TString outpath, TString histName, TString sav
     hist[i]->SetTitle(plotTitle);
   } 
 
-  //Plot histos on the same canvas
-  C.Clear(); 
+  //Plot histos
+  gStyle->SetHistMinimumZero();   
+  TCanvas C;
   float histMax=0; for(int i=0;i<numSR;i++) if(histMax<hist[i]->GetMaximum()) histMax=hist[i]->GetMaximum(); 
   hist[0]->Draw("hist");    
   hist[0]->GetYaxis()->SetRangeUser(0, histMax*1.2); 
+  for(int i=1;i<numSR;i++) hist[i]->Draw("sames hist"); 
+  
   TLegend * leg = new TLegend(0.78,0.77,0.98,0.95);
-  leg->AddEntry(hist[0], "SR1lep0b", "l"); 
-  for(int i=1;i<numSR;i++){
-    TString SR_idx=Form("%d",i);
-    hist[i]->Draw("sames hist"); 
-    leg->AddEntry(hist[i], "SR1lep"+SR_idx+"b", "l"); 
-  }
+  for(int i=0;i<numSR;i++){TString SR_idx=Form("%d",i); leg->AddEntry(hist[i], "SRB"+SR_idx, "l");}
   leg->Draw();   
-  C.Print(outpath+"/"+saveImageAs+".png"); 
+  
+  C.Print(outpath+"/"+histName+".png"); 
   delete leg;
   for(int i=0;i<numSR;i++) delete hist[i]; 
 }
 
-void plotHist(TFile * f, TString outpath, TString histName, TString saveImageAs, TString plotTitle, TString XaxisLabel){
+void plotHist(TFile * f, TString outpath, TString histName, TString plotTitle, TString XaxisLabel){
   if(!f->Get(histName)){ std::cout<<histName<<" not found"<<std::endl;  return;}
 
   TCanvas C;
@@ -50,11 +48,11 @@ void plotHist(TFile * f, TString outpath, TString histName, TString saveImageAs,
   hist->GetXaxis()->SetTitle(XaxisLabel); 
   hist->SetTitle(plotTitle); 
   hist->Draw("hist"); 
-  C.Print(outpath+"/"+saveImageAs+".png"); 
+  C.Print(outpath+"/"+histName+".png"); 
   delete hist; 
 }
 
-void plotHist2D(TFile * f, TString outpath, TString histName, TString saveImageAs, TString plotTitle, TString XaxisLabel, TString YaxisLabel){
+void plotHist2D(TFile * f, TString outpath, TString histName, TString plotTitle, TString XaxisLabel, TString YaxisLabel){
   if(!f->Get(histName)){ std::cout<<histName<<" not found"<<std::endl;  return;}
 
   TCanvas C;
@@ -66,35 +64,30 @@ void plotHist2D(TFile * f, TString outpath, TString histName, TString saveImageA
   hist->GetYaxis()->SetTitle(YaxisLabel); 
   hist->SetTitle(plotTitle); 
   hist->Draw("colz"); 
-  C.Print(outpath+"/"+saveImageAs+".png"); 
+  C.Print(outpath+"/"+histName+".png"); 
   delete hist; 
 }
 
 void plotHistos(){
-  TString sample[3]={"tH", "tWH", "ttbar"};
-  
-  for(int i=0;i<3;i++){
-
+  TString sample[3]={"tHqb", "ttbar", "tWH"};  
+  for(int i=0;i<2;i++){
+    
+    TString inpath="/nfs/home/ehelfenb/tHAnalysis/tH2017_"+sample[i]+".root";
     TString outpath="/afs/cern.ch/user/e/ehelfenb/www/tHAnalysis/"+sample[i];
-    TString rootFile="/nfs/home/ehelfenb/tHAnalysis/"+sample[i]+"2017.root";
-    TFile *f = TFile::Open(rootFile); 
+    TFile *f = TFile::Open(inpath);
+    if(!f){std::cout<<"File "<<inpath<<" does not exist"<<std::endl; continue;}
 
-    plotSignalRegions(f,outpath,"tH2017__1stfwdJetEta", "1stfwdJetEta", "", "most forward jet |#eta|");
-    plotSignalRegions(f,outpath,"tH2017__2ndfwdJetEta", "2ndfwdJetEta", "", "2nd most forward jet |#eta|");
-    plotSignalRegions(f,outpath,"tH2017__3rdfwdJetEta", "3rdfwdJetEta", "", "3rd most forward jet |#eta|");
+    plotSignalRegions(f,outpath,"fwdJet1Eta", "", "most forward jet |#eta|");
+    plotSignalRegions(f,outpath,"fwdJet2Eta", "", "2nd most forward jet |#eta|");
+    plotSignalRegions(f,outpath,"fwdJet3Eta", "", "3rd most forward jet |#eta|");
+    plotSignalRegions(f,outpath,"fwdJet4Eta", "", "4th most forward jet |#eta|");
 
-    plotSignalRegions(f,outpath,"tH2017__1stfwdBJetEta", "1stfwdBJetEta", "", "most forward bjet |#eta|");
-    plotSignalRegions(f,outpath,"tH2017__2ndfwdBJetEta", "2ndfwdBJetEta", "", "2nd most forward bjet |#eta|");
-    plotSignalRegions(f,outpath,"tH2017__3rdfwdBJetEta", "3rdfwdBJetEta", "", "3rd most forward bjet |#eta|");
-
-    plotHist(f,outpath,"tH2017__Njets_nocuts", "Njets_nocuts", "","number of jets (no cuts)");
-    plotHist(f,outpath,"tH2017__Njets", "Njets", "", "number of jets");
-    plotHist(f,outpath,"tH2017__Nbjets_nocuts", "Nbjets_nocuts", "", "number of bjets (no cuts)");
-    plotHist(f,outpath,"tH2017__Nbjets", "Nbjets", "", "number of bjets");
-    plotHist(f,outpath,"tH2017__MET", "MET", "", "MET [GeV]");
+    plotHist(f,outpath,"Njets", "", "number of jets");
+    plotHist(f,outpath,"MET", "", "MET [GeV]");
 
     f->Close();
     delete f; 
   }
   gROOT->ProcessLine(".q");
 }
+
