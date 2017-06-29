@@ -55,6 +55,7 @@ void plotSigPU(){
       TString SR=Form("%d",i); 
       SR="SRB"+SR;
       makePlot(f, sample, outpath, "fwdJet"+jet+"Eta_"+SR, SR, whichJet[j]+" most forward jet |#eta|");
+      if(j==0) makePlot(f, sample, outpath, "fwdBJet"+jet+"Eta_"+SR, SR, whichJet[j]+" most forward jet |#eta|");
     }
   } 
 

@@ -1,0 +1,3 @@
+simpleAnalysis -a tH2017 \
+
+mv tH2017.root ../tH2017_tWH.root
