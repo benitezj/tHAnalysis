@@ -1,0 +1,15 @@
+Universe   = vanilla
+Notification = Never
+
+Executable = FWPATH/runSimpleAnalysis.sh
+Arguments  = FILE SAMPLE
+
+GetEnv     = True
+
+Log        = /tmp/USER/SAMPLE_JOB.log
+Output     = LOGPATH/SAMPLE_JOB.out
+Error      = LOGPATH/SAMPLE_JOB.err
+
+accounting_group = group_atlas.uiowa
+
+Queue
