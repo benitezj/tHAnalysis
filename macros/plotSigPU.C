@@ -15,6 +15,7 @@ void makePlot(std::vector<TFile*> f, std::vector<TString> sample, TString outpat
     hist[i]->Scale(1./hist[i]->Integral()); 
     hist[i]->GetXaxis()->SetTitle(XaxisLabel);
     hist[i]->SetLineColor(i+1); 
+    hist[i]->SetLineWidth(2); 
     hist[i]->SetFillStyle(0); 
     hist[i]->SetStats(0); 
     hist[i]->SetTitle(plotTitle);
@@ -28,22 +29,21 @@ void makePlot(std::vector<TFile*> f, std::vector<TString> sample, TString outpat
   hist[0]->GetYaxis()->SetRangeUser(0, histMax*1.2);    
   entries.push_back(Form("%.0f", hist[0]->GetEntries())); 
   for(int i=1;i<nSamples;i++){ hist[i]->Draw("sames hist"); entries.push_back(Form("%.0f", hist[i]->GetEntries()));}
-  TLegend * leg = new TLegend(0.77,0.83,0.98,0.95);
+  TLegend * leg = new TLegend(0.68,0.78,0.98,0.95);
   for(int i=0;i<nSamples;i++) leg->AddEntry(hist[i], sample[i]+", "+entries[i]+" entries", "l"); 
   leg->Draw();     
   C.Print(outpath+"/signalPU_"+histName+".png"); 
   delete leg;
-  for(int i=0;i<nSamples;i++){
-    delete hist[i]; 
-  }
+  for(int i=0;i<nSamples;i++) delete hist[i]; 
+
 }
 
 void plotSigPU(){
 
   //sample names and input/output paths
-  std::vector<TString> sample = {"tHqb", "ttbar"};  
+  std::vector<TString> sample = {"tHqb", "ttbar", "tWH"};  
   int nSamples = sample.size();   
-  std::vector<TFile*> f; for(int i=0;i<nSamples;i++) f.push_back(TFile::Open("/nfs/home/ehelfenb/tHAnalysis/tH2017_"+sample[i]+".root"));
+  std::vector<TFile*> f; for(int i=0;i<nSamples;i++) f.push_back(TFile::Open("/data/tHAnalysis/June30/tH2017_"+sample[i]+".root"));
   TString outpath="/afs/cern.ch/user/e/ehelfenb/www/tHAnalysis";
 
   //plot forward jet eta for the signal regions
@@ -55,7 +55,7 @@ void plotSigPU(){
       TString SR=Form("%d",i); 
       SR="SRB"+SR;
       makePlot(f, sample, outpath, "fwdJet"+jet+"Eta_"+SR, SR, whichJet[j]+" most forward jet |#eta|");
-      if(j==0) makePlot(f, sample, outpath, "fwdBJet"+jet+"Eta_"+SR, SR, whichJet[j]+" most forward jet |#eta|");
+      if(j==0) makePlot(f, sample, outpath, "fwdBJet"+jet+"Eta_"+SR, SR, whichJet[j]+" most forward bjet |#eta|");
     }
   } 
 
@@ -63,9 +63,11 @@ void plotSigPU(){
   makePlot(f, sample, outpath, "MET", "", "MET [GeV]"); 
   makePlot(f, sample, outpath, "MET_nocuts", "", "MET (no cuts) [GeV]"); 
   makePlot(f, sample, outpath, "Njets", "", "number of jets"); 
-  makePlot(f, sample, outpath, "Nbjets", "", "number of bjets"); 
   makePlot(f, sample, outpath, "Njets_nocuts", "", "number of jets (no cuts)"); 
-  makePlot(f, sample, outpath, "fwdBJet1Eta", "", "most forward bjet |#eta|"); 
+  makePlot(f, sample, outpath, "Nbjets", "", "number of bjets"); 
+  makePlot(f, sample, outpath, "NLep_nocuts", "", "number of leptons (no cuts)"); 
+  makePlot(f, sample, outpath, "pTL", "", "lepton p{T} [GeV]"); 
+  
 
   for(int i=0;i<nSamples;i++){f[i]->Close(); delete f[i];}
 
