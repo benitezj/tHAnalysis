@@ -1,0 +1,5 @@
+/pnfs/usatlas.bnl.gov/LOCALGROUPDISK/rucio/mc15_13TeV/f1/ae/DAOD_TRUTH3.10603598._000001.pool.root.1 
+/pnfs/usatlas.bnl.gov/LOCALGROUPDISK/rucio/mc15_13TeV/bb/7f/DAOD_TRUTH3.10603598._000002.pool.root.1 
+/pnfs/usatlas.bnl.gov/LOCALGROUPDISK/rucio/mc15_13TeV/f0/23/DAOD_TRUTH3.10603598._000003.pool.root.1 
+/pnfs/usatlas.bnl.gov/LOCALGROUPDISK/rucio/mc15_13TeV/69/02/DAOD_TRUTH3.10603598._000004.pool.root.1 
+/pnfs/usatlas.bnl.gov/LOCALGROUPDISK/rucio/mc15_13TeV/ce/02/DAOD_TRUTH3.10603598._000005.pool.root.1 
