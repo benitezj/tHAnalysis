@@ -1,0 +1,13 @@
+crossSection         : 78420000
+crossSection         : 78420000
+crossSection         : 2433200
+crossSection         : 26454
+crossSection         : 254.63
+crossSection         : 4.5535
+crossSection         : 0.25753
+crossSection         : 0.016215
+crossSection         : 0.00062504
+crossSection         : 0.00001964
+crossSection         : 0.0000011962
+crossSection         : 0.000000042259
+crossSection         : 0.0000000010367
