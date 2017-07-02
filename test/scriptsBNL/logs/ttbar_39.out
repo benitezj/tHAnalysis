@@ -1,0 +1,68 @@
+Processing: /pnfs/usatlas.bnl.gov/LOCALGROUPDISK/rucio/mc15_13TeV/d2/92/DAOD_TRUTH3.10628855._000041.pool.root.1 ...
+Filename = DAOD_TRUTH3.10628855._000041.pool.root.1
+Warning!! invalid input argument=/pnfs/usatlas.bnl.gov/LOCALGROUPDISK/rucio/mc15_13TeV/d2/92/DAOD_TRUTH3.10628855._000041.pool.root.1
+Usage: rcSetup [options] project,[asgType,]release,[,configs]
+
+       where project/release/configs are delimited by "," or space:
+          projName           # project choice, such as "Base"
+          asgType            # type of asg release, such as "private","1.0.X"
+          64 | 32            # 64-bit (x86_64) or 32-bit (i686)
+          slc5 | slc6        # using slc5 or slc6
+          opt | dbg          # using opt or dbg version of ASG releas
+          gcc43 | gcc46 | gcc47  # in format gcc* set gcc version
+
+The default configuration can be overridden by defining env var "rcSetupSite".
+
+
+Options:
+  -h, --help            show this help message and exit
+  -d                    Download source code of a release, try '-d -h' for
+                        usage
+  -b, --buildRelease    Download & build release under current directory, try
+                        '-b -h' for usage
+  -q, --quiet           Be quiet, only print required information
+  -V, --version         Print rcSetup version
+  -r, --releases        Print available releases
+  -c, --printConfigs    Print available config(s) for given project/release
+  -R, --printRootVer    Print ROOT version for a given release
+  -M, --printMyRelease  Print the currently used release number
+  -P, --ProofInitCmd    Set up analysis release on Proof (excluding ProofLite)
+  --listPackages        Print a list of packages for a given release
+  -f, --findPackages    Automatic running 'rc find_packages' in this setup
+  -u, --unSetup         unSet currently existing ASG environment
+Running on file: /pnfs/usatlas.bnl.gov/LOCALGROUPDISK/rucio/mc15_13TeV/d2/92/DAOD_TRUTH3.10628855._000041.pool.root.1
+xAOD::Init                INFO    Environment initialised for data access
+MCWeightIndex = 0
+Analyses to run: tH2017 
+Files to analyze: /pnfs/usatlas.bnl.gov/LOCALGROUPDISK/rucio/mc15_13TeV/d2/92/DAOD_TRUTH3.10628855._000041.pool.root.1 
+Output split per analysis
+Reading xAOD input
+Now reading: /pnfs/usatlas.bnl.gov/LOCALGROUPDISK/rucio/mc15_13TeV/d2/92/DAOD_TRUTH3.10628855._000041.pool.root.1
+at: 0
+at: 10000
+at: 20000
+at: 30000
+at: 40000
+at: 50000
+at: 60000
+at: 70000
+at: 80000
+at: 90000
+at: 100000
+at: 110000
+at: 120000
+at: 130000
+at: 140000
+at: 150000
+at: 160000
+at: 170000
+at: 180000
+at: 190000
+at: 200000
+at: 210000
+at: 220000
+at: 230000
+xAOD::TFileAccessTracer   INFO    Sending file access statistics to http://rucio-lb-prod.cern.ch:18762/traces/
+DAOD_TRUTH3.10628855._000041.pool.root.1
+tH2017.root
+tH2017.txt

@@ -2,6 +2,19 @@
 
 source ~/scripts/colors.sh
 
+checkMissing() {
+  sample=$1
+  samplesdir=/usatlas/u/sargyrop/tHFramework/tHAnalysis/data/PathsBNL/TRUTH3
+  # Loop over input files
+  for i in `cat $samplesdir/$sample.txt` ; do
+    inname=$(echo $i | awk 'BEGIN {FS="/"} ; {print $NF}' | awk 'BEGIN {FS=".pool"} ; {print $1}')
+    outname=$inname.root
+    if [ ! -f $base_dir/$sample/$outname ] ; then
+      echo $i
+    fi
+  done
+}
+
 checkFinished() {
 
   printf "${BLUE}Checking output files ...${NC}\n"
@@ -41,6 +54,7 @@ mergeFiles() {
 
 # Main script
 checkonly=false
+checkMissing=false
 
 # Get the options
 while [[ $# > 0 ]] ; do
@@ -48,6 +62,10 @@ while [[ $# > 0 ]] ; do
   case $arg in 
     -check|-c)
     checkonly=true ;;
+    -checkMissing|-cm|-cM)
+    checkmissing=true
+    sampleCheck=$2
+    shift ;;
   esac
   shift   
 done
@@ -59,10 +77,19 @@ cd $base_dir
 allok=true
 
 # Check if all files for all samples have been produced
-checkFinished
+if [[ "$checkonly" == true ]] ; then
+  checkFinished
+  exit 0
+fi
+
+if [[ "$checkmissing" == true ]] ; then
+  checkMissing $sampleCheck
+  exit 0
+fi
 
 # Now merge the files
 if [[ "$allok" == true ]] ; then
+  checkFinished
   mergeFiles
 fi
 

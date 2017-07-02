@@ -1,0 +1,2 @@
+mktemp: option requires an argument -- 'p'
+Try `mktemp --help' for more information.

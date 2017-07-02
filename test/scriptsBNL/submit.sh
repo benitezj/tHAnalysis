@@ -3,14 +3,14 @@
 samples=()
 if [[ "$#" > "0" ]] ; then
   for v in "$@" ; do
-    if [[ "$v" != "ttbar" && "$v" != "ttH" && "$v" != "tH" && "$v" != "tWH" ]] ; then
+    if [[ "$v" != "ttbar" && "$v" != "ttH_dilep" && "$v" != "ttH_semilep" && "$v" != "tH" && "$v" != "tWH" ]] ; then
       echo "Unknown sample: $v  -  Will be skipped"
       continue
     fi 
     samples+=("$v") 
   done
 else  
-  samples+=(ttbar tWH tH ttH)
+  samples+=(ttbar tWH tH ttH_dilep ttH_semilep)
 fi
 
 
@@ -38,14 +38,19 @@ cd $SCRIPTDIR
 for sample in "${samples[@]}" ; do
  
   if [[ $BASEDIR == *"usatlas"* ]] ; then 
-    pathFile=../../data/PathsBNL/$sample.txt
+    pathFile=../../data/PathsBNL/TRUTH3/$sample.txt
   else
     pathFile=../../data/PathsIowa/$sample.txt 
   fi  
- 
+  
+  # Get missing files
+  files=($(./mergeBatchOutput.sh -cM $sample))
+  
   # Loop over input files and submit jobs
   job=0
-  for file in `head -2 $pathFile` ; do 
+  for file in "${files[@]}" ; do 
+    echo $file
+    continue
     sed "s|FWPATH|$SCRIPTDIR|g" template.sub > temp.sub
     sed -i "s|SAMPLE|$sample|g" temp.sub
     sed -i "s|FILE|$file|g" temp.sub
