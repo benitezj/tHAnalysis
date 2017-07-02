@@ -4,7 +4,7 @@ source ~/scripts/colors.sh
 
 checkMissing() {
   sample=$1
-  samplesdir=/usatlas/u/sargyrop/tHFramework/tHAnalysis/data/PathsBNL/TRUTH3
+  samplesdir=/usatlas/u/sargyrop/tHFramework/tHAnalysis/data/PathsBNL/TRUTH1
   # Loop over input files
   for i in `cat $samplesdir/$sample.txt` ; do
     inname=$(echo $i | awk 'BEGIN {FS="/"} ; {print $NF}' | awk 'BEGIN {FS=".pool"} ; {print $1}')
@@ -20,7 +20,7 @@ checkFinished() {
   printf "${BLUE}Checking output files ...${NC}\n"
   
   samples=(ttbar ttH_dilep ttH_semilep tH tWH)
-  samplesdir=/usatlas/u/sargyrop/tHFramework/tHAnalysis/data/PathsBNL/TRUTH3
+  samplesdir=/usatlas/u/sargyrop/tHFramework/tHAnalysis/data/PathsBNL/TRUTH1
 
   # Loop over samples and check if number of output files is as expected
   for sample in "${samples[@]}" ; do 

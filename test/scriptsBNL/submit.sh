@@ -38,7 +38,7 @@ cd $SCRIPTDIR
 for sample in "${samples[@]}" ; do
  
   if [[ $BASEDIR == *"usatlas"* ]] ; then 
-    pathFile=../../data/PathsBNL/TRUTH3/$sample.txt
+    pathFile=../../data/PathsBNL/TRUTH1/$sample.txt
   else
     pathFile=../../data/PathsIowa/$sample.txt 
   fi  
