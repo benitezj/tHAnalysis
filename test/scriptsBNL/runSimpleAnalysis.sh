@@ -23,17 +23,17 @@ cp $file .
 
 # run simpleAnalysis
 echo "Running on file: $file"
-simpleAnalysis -a tHAnalysis $file
+simpleAnalysis -a tH2017 $file
 
 ls
 
 # copy to output directory
-if [ -f tHAnalysis.root ] ; then
+if [ -f tH2017.root ] ; then
   outputname=$(echo $filename | awk 'BEGIN {FS=".pool"} ; {print $1}')
-  mv tHAnalysis.root $OUTPUTDIR/$outputname.root
+  mv tH2017.root $OUTPUTDIR/$outputname.root
   cd $HOME
 else
-  echo "ERROR: tHAnalysis.root has not been created"
+  echo "ERROR: tH2017.root has not been created"
   cd $HOME
   exit 5
 fi
