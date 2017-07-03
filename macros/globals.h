@@ -10,8 +10,6 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include <sys/stat.h>
-using namespace std;
-
 #include <TString.h>
 #include <TFile.h>
 #include <TTree.h>
@@ -33,73 +31,79 @@ using namespace std;
 #include <TFrame.h>
 #include <TGraph.h>
 
-#define NMAXINPUTFILES 100
+#include "/nfs/home/benitezj/Notes/atlasstyle/AtlasStyle.C"
+#include "/nfs/home/benitezj/Notes/atlasstyle/AtlasUtils.C"
+#include "/nfs/home/benitezj/Notes/atlasstyle/AtlasLabels.C"
+
+using namespace std;
+
+#define LUMI 3000000 //3000/fb  but in /pb (crossections are in pb)
+
 
 TString FitGausFormula("[0]*exp(-0.5*(x-[1])**2/[2]**2)");
 TString FitGausText("Mean=%.2f+/-%.2f,  Sigma=%.2f+/-%.2f");
 
-TChain* TREE = NULL; ///Chain with the cells,jets,...
-TH1F* HNCELLvsR = NULL; ///histogram containing the definition of the cells
 
-void loadChain(TString inpath, TChain * TREE, TString sample){
-  if(!TREE) return;
+//////////////Load the crossections
+std::map<std::string,float> getCrossections(){
+ std:map<std::string,float> xS;
 
-  int nonExistentCounter=0;
-  for(long i=0;i<=NMAXINPUTFILES;i++){
-    if(nonExistentCounter==10)      break;//stop adding files
+  std::ifstream infile("tHAnalysis/data/xSections.txt");
+  std::string line;
+  while (std::getline(infile,line)){
+    std::istringstream iss(line);
 
-    TString fname =inpath+"/mytuple"+(long)i;
-
-    struct stat st;
-    if(stat((fname+".root").Data(),&st) != 0){
-      if(i==0) cout<<(fname+".root")<<" Not found"<<endl;      nonExistentCounter++;       continue;
-    }  
-    TFile file((fname+".root").Data(),"read");
-    if(file.IsZombie()){
-      cout<<(fname+".root")<<" is Zombie"<<endl;  continue;
-    }
-    if(!file.GetListOfKeys()){
-      cout<<(fname+".root")<<" has no Keys"<<endl;      continue;
-    }
-    if(file.GetListOfKeys()->GetSize()==0){
-      cout<<(fname+".root")<<" KeysSize = 0"<<endl;      continue;            
-    }
-
-    TREE->Add((fname+".root").Data());    
-  }
-  cout<<"Number of input events "<<TREE->GetEntries()<<endl;
-}
-
-void loadHistos(TString inpath){
-  for(long i=0;i<=NMAXINPUTFILES;i++){
-
-    TString fname=inpath+"/mytuple"+(long)i;
-    struct stat st;
-
-    if(stat((fname+".root").Data(),&st) != 0){
-      continue;
-    }  
-    TFile file((fname+".root").Data(),"read");
-    if(file.IsZombie()){
-      continue;
-    }
-    if(!file.GetListOfKeys()){
-      continue;
-    }
-    if(file.GetListOfKeys()->GetSize()==0){
-      continue;            
-    }
-
-    HNCELLvsR = (TH1F*) file.Get("HNCell");
-    break;//Use the first good file
+    char B[100]="";
+    iss>>B;
+    float X=0;
+    iss>>X;
+    xS[B]=X;
   }
 
-  if(!HNCELLvsR){
-    cout<<" No file was found for loading histograms"<<endl;
-  }
+  return xS;
 }
 
 
+
+std::map<std::string,TFile*> getSamples(TString inputpath, std::vector<std::string>  samplelist){
+  std::map<std::string,TFile*> files;
+
+  for(int b=0;b<samplelist.size();b++){
+    TFile*F=new TFile(inputpath+"/tH2017_"+samplelist[b].c_str()+".root","read");
+    if(!F) continue;
+    if(F->IsZombie()) continue;
+    if(!(F->Get("events"))) continue;
+    files[samplelist[b]]=F;
+  }
+
+  return files;
+}
+
+
+
+std::map<std::string,TH1F*> getHistos(TString inputpath,std::vector<std::string> bkgs, TString histoname){
+
+  std::map<std::string,float> xs=getCrossections();
+  std::map<std::string,TFile*> samples=getSamples(inputpath,bkgs);
+  std::map<std::string,TH1F*> histos;
+  for(int b=0;b<bkgs.size();b++){
+    if(!samples[bkgs[b]]) continue;
+    TH1F*Hevents=((TH1F*)(samples[bkgs[b]]->Get("events")));
+    if(!Hevents) continue;
+    TH1F*H=(TH1F*)samples[bkgs[b]]->Get(histoname.Data());
+    if(!H) continue;
+    //cout<<bkgs[b].c_str()<<" "<<xs[bkgs[b]]<<" "<<Hevents->GetBinContent(2)<<endl;
+    H->Scale(LUMI*xs[bkgs[b].c_str()]/Hevents->GetBinContent(2));
+    histos[bkgs[b]]=H;
+  }
+
+  return histos;
+}
+
+
+
+
+/////////////////////////Some tools 
 TH1F* makeHistRatio(TH1* HNum,TH1* HDenom,float maxerr=0.5){
   if(HNum==NULL || HDenom == NULL){ 
     cout<<"Histograms are NULL"<<endl;
