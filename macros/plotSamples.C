@@ -3,11 +3,13 @@
 void plotSamples(TString histo="Nbjets", 
 		 TString inputpath="/data/tHAnalysis/July1", 
 		 TString outpath="./Plots"){
-  
+ 
+  LUMI=0;//set to 0 for shape comparisons
+ 
   SetAtlasStyle();
   gStyle->SetPalette(1,0);
     
-  std::vector<std::string> m_bkgs={"ttbar","tHqb","tWH","ttH_dilep","ttH_semilep"};
+  std::vector<std::string> m_bkgs={"tHqb","tWH","ttH_dilep","ttH_semilep","ttbar"};//
   std::map<std::string,int> color;
   color["ttbar"]=1;
   color["tHqb"]=2;
@@ -18,6 +20,7 @@ void plotSamples(TString histo="Nbjets",
 
   std::map<std::string,TH1F*> histos=getHistos(inputpath,m_bkgs,histo);
   
+
   float maxy=0;
   float miny=0.1;
   for(int b=0;b<m_bkgs.size();b++){
@@ -25,6 +28,8 @@ void plotSamples(TString histo="Nbjets",
     if(histos[m_bkgs[b]]->GetBinContent(histos[m_bkgs[b]]->GetMaximumBin())>maxy)
       maxy=histos[m_bkgs[b]]->GetBinContent(histos[m_bkgs[b]]->GetMaximumBin());
   }
+  if(maxy==0){cout<<"There are not histograms"<<endl; return;}//it means there were not histograms, or they are all empty
+
 
   TCanvas C;
   TH1F*HFrame=(TH1F*)histos[m_bkgs[0]]->Clone("Hframe");

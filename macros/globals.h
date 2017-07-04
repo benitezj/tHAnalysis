@@ -37,7 +37,7 @@
 
 using namespace std;
 
-#define LUMI 3000000 //3000/fb  but in /pb (crossections are in pb)
+float LUMI=3000000; //3000/fb  but in /pb (crossections are in pb)
 
 
 TString FitGausFormula("[0]*exp(-0.5*(x-[1])**2/[2]**2)");
@@ -69,6 +69,8 @@ std::map<std::string,TFile*> getSamples(TString inputpath, std::vector<std::stri
   std::map<std::string,TFile*> files;
 
   for(int b=0;b<samplelist.size();b++){
+    files[samplelist[b]]=NULL;
+
     TFile*F=new TFile(inputpath+"/tH2017_"+samplelist[b].c_str()+".root","read");
     if(!F) continue;
     if(F->IsZombie()) continue;
@@ -87,13 +89,16 @@ std::map<std::string,TH1F*> getHistos(TString inputpath,std::vector<std::string>
   std::map<std::string,TFile*> samples=getSamples(inputpath,bkgs);
   std::map<std::string,TH1F*> histos;
   for(int b=0;b<bkgs.size();b++){
+    histos[bkgs[b]]=NULL;
+
     if(!samples[bkgs[b]]) continue;
     TH1F*Hevents=((TH1F*)(samples[bkgs[b]]->Get("events")));
     if(!Hevents) continue;
-    TH1F*H=(TH1F*)samples[bkgs[b]]->Get(histoname.Data());
+    TH1F*H=(TH1F*)(samples[bkgs[b]]->Get(histoname.Data()));
     if(!H) continue;
     //cout<<bkgs[b].c_str()<<" "<<xs[bkgs[b]]<<" "<<Hevents->GetBinContent(2)<<endl;
-    H->Scale(LUMI*xs[bkgs[b].c_str()]/Hevents->GetBinContent(2));
+    if(LUMI==0) H->Scale(1000/H->Integral());
+    else H->Scale(LUMI*xs[bkgs[b].c_str()]/Hevents->GetBinContent(2));
     histos[bkgs[b]]=H;
   }
 
