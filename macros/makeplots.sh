@@ -33,7 +33,7 @@ root -b -q tHAnalysis/macros/plotSamples.C\(\"top_pt\",\"$INPUT\",\"$OUTPUT\"\)
 ################################################################
 root -b -q tHAnalysis/macros/plotSamples.C\(\"MET_SRB3\",\"$INPUT\",\"$OUTPUT\"\)
 root -b -q tHAnalysis/macros/plotSamples.C\(\"sumAllPt_SRB3\",\"$INPUT\",\"$OUTPUT\"\)
-root -b -q tHAnalysis/macros/plotSamples.C\(\"NAntiBjets_SRBX\",\"$INPUT\",\"$OUTPUT\"\)
+root -b -q tHAnalysis/macros/plotSamples.C\(\"NAntiBjets_SRB3\",\"$INPUT\",\"$OUTPUT\"\)
 root -b -q tHAnalysis/macros/plotSamples.C\(\"lep_pt_SRB3\",\"$INPUT\",\"$OUTPUT\"\)
 root -b -q tHAnalysis/macros/plotSamples.C\(\"leadJetPt_SRB3\",\"$INPUT\",\"$OUTPUT\"\)
 root -b -q tHAnalysis/macros/plotSamples.C\(\"leadBJetPt_SRB3\",\"$INPUT\",\"$OUTPUT\"\)
@@ -61,7 +61,7 @@ root -b -q tHAnalysis/macros/plotSamples.C\(\"fwdJetPtH3_SRMbb_SRB3\",\"$INPUT\"
 #############################################################
 root -b -q tHAnalysis/macros/plotSamples.C\(\"MET_SRB4\",\"$INPUT\",\"$OUTPUT\"\)
 root -b -q tHAnalysis/macros/plotSamples.C\(\"sumAllPt_SRB4\",\"$INPUT\",\"$OUTPUT\"\)
-root -b -q tHAnalysis/macros/plotSamples.C\(\"NAntiBjets_SRBX\",\"$INPUT\",\"$OUTPUT\"\)
+root -b -q tHAnalysis/macros/plotSamples.C\(\"NAntiBjets_SRB4\",\"$INPUT\",\"$OUTPUT\"\)
 root -b -q tHAnalysis/macros/plotSamples.C\(\"lep_pt_SRB4\",\"$INPUT\",\"$OUTPUT\"\)
 root -b -q tHAnalysis/macros/plotSamples.C\(\"leadJetPt_SRB4\",\"$INPUT\",\"$OUTPUT\"\)
 root -b -q tHAnalysis/macros/plotSamples.C\(\"leadBJetPt_SRB4\",\"$INPUT\",\"$OUTPUT\"\)
