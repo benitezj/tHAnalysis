@@ -2,7 +2,7 @@ Universe   = vanilla
 Notification = Never
 
 Executable = FWPATH/runSimpleAnalysis.sh
-Arguments  = FILE SAMPLE
+Arguments  = FILE SAMPLE SMEAR TC HGTD
 
 GetEnv     = True
 

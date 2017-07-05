@@ -55,6 +55,9 @@ mergeFiles() {
 # Main script
 checkonly=false
 checkMissing=false
+smearing=false
+trackConfirm=true
+HGTD=false
 
 # Get the options
 while [[ $# > 0 ]] ; do
@@ -66,15 +69,38 @@ while [[ $# > 0 ]] ; do
     checkmissing=true
     sampleCheck=$2
     shift ;;
+    -smear|-s)
+    smearing=true ;;
+    -noTC)
+    trackConfirm=false ;;
+    -HGTD)
+    HGTD=true ;;
   esac
   shift   
 done
 
-base_dir=/usatlas/u/sargyrop/tHFramework/OutputRootFiles
+
+if [[ "$smearing" == false ]] ; then
+  base_dir=/usatlas/u/sargyrop/tHFramework/OutputRootFiles/mu0
+else
+  if [[ "$trackConfirm" == false ]] ; then
+    base_dir=/usatlas/u/sargyrop/tHFramework/OutputRootFiles/mu200_noTC
+  else
+    base_dir=/usatlas/u/sargyrop/tHFramework/OutputRootFiles/mu200_TC
+  fi 
+  if [[ "$HGTD" == true ]] ; then 
+    base_dir=$base_dir'_HGTD'
+  fi
+fi
 cd $base_dir
 
 # Flag to test if all files have been produced
 allok=true
+
+if [[ "$checkmissing" == true ]] ; then
+  checkMissing $sampleCheck
+  exit 0
+fi
 
 # Check if all files for all samples have been produced
 if [[ "$checkonly" == true ]] ; then
@@ -82,14 +108,9 @@ if [[ "$checkonly" == true ]] ; then
   exit 0
 fi
 
-if [[ "$checkmissing" == true ]] ; then
-  checkMissing $sampleCheck
-  exit 0
-fi
-
 # Now merge the files
+checkFinished
 if [[ "$allok" == true ]] ; then
-  checkFinished
   mergeFiles
 fi
 

@@ -1,18 +1,23 @@
 #!/bin/bash
 
-samples=()
-if [[ "$#" > "0" ]] ; then
-  for v in "$@" ; do
-    if [[ "$v" != "ttbar" && "$v" != "ttH_dilep" && "$v" != "ttH_semilep" && "$v" != "tH" && "$v" != "tWH" ]] ; then
-      echo "Unknown sample: $v  -  Will be skipped"
-      continue
-    fi 
-    samples+=("$v") 
-  done
-else  
-  samples+=(ttbar tWH tH ttH_dilep ttH_semilep)
-fi
+#samples=(ttbar tWH tH ttH_dilep ttH_semilep)
+samples=(tH)
+smearing=false
+trackConfirm=true
+HGTD=false
 
+while [[ $# > 0 ]] ; do
+  arg="$1"
+  case $arg in 
+    -smear|-s)
+    smearing=true ;;
+    -noTC)
+    trackConfirm=false ;;
+    -HGTD)
+    HGTD=true ;;
+  esac
+  shift   
+done
 
 # Set up directory structure - done automatically for BNL and uiowapc
 BASEDIR=$(echo $PWD | awk 'BEGIN {FS="/tHAnalysis"} ; {print $1}')
@@ -49,14 +54,15 @@ for sample in "${samples[@]}" ; do
   # Loop over input files and submit jobs
   job=0
   for file in "${files[@]}" ; do 
-    echo $file
-    continue
     sed "s|FWPATH|$SCRIPTDIR|g" template.sub > temp.sub
     sed -i "s|SAMPLE|$sample|g" temp.sub
     sed -i "s|FILE|$file|g" temp.sub
     sed -i "s|USER|$USER|g" temp.sub
     sed -i "s|LOGPATH|$LOGDIR|g" temp.sub
     sed -i "s|JOB|$job|g" temp.sub
+    sed -i "s|SMEAR|$smearing|g" temp.sub
+    sed -i "s|TC|$trackConfirm|g" temp.sub
+    sed -i "s|HGTD|$HGTD|g" temp.sub
     condor_submit temp.sub
     rm -f temp.sub
     let job=$job+1

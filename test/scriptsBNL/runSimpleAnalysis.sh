@@ -2,6 +2,10 @@
 
 file=$1
 sample=$2
+smear=$3
+TC=$4
+HGTD=$5
+
 filename=$(echo $file | awk 'BEGIN {FS="/"} ; {print $NF}')
 echo "Processing: $file ..."
 echo "Filename = $filename"
@@ -10,7 +14,25 @@ echo "Filename = $filename"
 HOME=/direct/usatlas+u/sargyrop/tHFramework
 cd $HOME
 
-OUTPUTDIR=$HOME/OutputRootFiles/$sample
+OUTPUTDIR=$HOME/OutputRootFiles
+
+if [[ "$smear" == false ]] ; then 
+  OUTPUTDIR=$OUTPUTDIR/mu0/$sample
+else
+  if [[ "$TC" == false ]] ; then
+    OUTPUTDIR=$OUTPUTDIR/mu200_noTC/$sample
+  else
+    if [[ "$HGTD" == true ]] ; then
+      OUTPUTDIR=$OUTPUTDIR/mu200_TC_HGTD/$sample
+    else
+      OUTPUTDIR=$OUTPUTDIR/mu200_TC/$sample
+    fi
+  fi
+fi
+
+if [ ! -d $OUTPUTDIR ] ; then
+  mkdir $OUTPUTDIR
+fi
 
 # setup envionment
 source rcSetup.sh
@@ -23,9 +45,20 @@ cp $file .
 
 # run simpleAnalysis
 echo "Running on file: $file"
-simpleAnalysis -a tH2017 $file
 
-ls
+if [[ "$smear" == false ]] ; then 
+  simpleAnalysis -a tH2017 $file
+else
+  if [[ "$TC" == false ]] ; then
+    simpleAnalysis -s mu=200,noTrackConfirm -a tH2017 $file
+  else
+    if [[ "$HGTD" == true ]] ; then
+      simpleAnalysis -s mu=200,useHGTD0 -a tH2017 $file
+    else
+      simpleAnalysis -s mu=200 -a tH2017 $file
+    fi
+  fi
+fi
 
 # copy to output directory
 if [ -f tH2017.root ] ; then
