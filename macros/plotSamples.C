@@ -4,7 +4,7 @@ void plotSamples(TString histo="Nbjets",
 		 TString inputpath="/data/tHAnalysis/July1", 
 		 TString outpath="./Plots"){
  
-  LUMI=0;//set to 0 for shape comparisons
+  //LUMI=0;//set to 0 for shape comparisons
  
   SetAtlasStyle();
   gStyle->SetPalette(1,0);
@@ -19,16 +19,19 @@ void plotSamples(TString histo="Nbjets",
   
 
   std::map<std::string,TH1F*> histos=getHistos(inputpath,m_bkgs,histo);
-  
+  //cout<<histos.size()<<endl;
 
   float maxy=0;
   float miny=0.1;
   for(int b=0;b<m_bkgs.size();b++){
-    if(!histos[m_bkgs[b]]) continue;
+    if(histos[m_bkgs[b]]==0) continue;
+    //cout<<b<<" "<<histos[m_bkgs[b]]<<endl;
     if(histos[m_bkgs[b]]->GetBinContent(histos[m_bkgs[b]]->GetMaximumBin())>maxy)
       maxy=histos[m_bkgs[b]]->GetBinContent(histos[m_bkgs[b]]->GetMaximumBin());
   }
-  if(maxy==0){cout<<"There are not histograms"<<endl; return;}//it means there were not histograms, or they are all empty
+  if(maxy==0){cout<<"There are no histograms"<<endl; return;}//it means there were not histograms, or they are all empty
+  
+  if(histos[m_bkgs[0]]==0){cout<<" m_bkgs[0] = NULL"<<endl; return;}
 
 
   TCanvas C;
@@ -46,7 +49,7 @@ void plotSamples(TString histo="Nbjets",
 
   for(int b=0;b<m_bkgs.size();b++){
 
-    if(!histos[m_bkgs[b]])continue;
+    if(histos[m_bkgs[b]]==NULL)continue;
 
     histos[m_bkgs[b]]->SetLineColor(color[m_bkgs[b]]);
     histos[m_bkgs[b]]->Draw("histsame");

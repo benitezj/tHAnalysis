@@ -96,7 +96,7 @@ std::map<std::string,TH1F*> getHistos(TString inputpath,std::vector<std::string>
     if(!Hevents) continue;
     TH1F*H=(TH1F*)(samples[bkgs[b]]->Get(histoname.Data()));
     if(!H) continue;
-    //cout<<bkgs[b].c_str()<<" "<<xs[bkgs[b]]<<" "<<Hevents->GetBinContent(2)<<endl;
+    cout<<bkgs[b].c_str()<<" "<<xs[bkgs[b]]<<" "<<Hevents->GetBinContent(2)<<endl;
     if(LUMI==0) H->Scale(1000/H->Integral());
     else H->Scale(LUMI*xs[bkgs[b].c_str()]/Hevents->GetBinContent(2));
     histos[bkgs[b]]=H;
