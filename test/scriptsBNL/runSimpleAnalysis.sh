@@ -50,12 +50,12 @@ if [[ "$smear" == false ]] ; then
   simpleAnalysis -a tH2017 $file
 else
   if [[ "$TC" == false ]] ; then
-    simpleAnalysis -s mu=200,noTrackConfirm -a tH2017 $file
+    simpleAnalysis -s mu=200,noTrackConfirm,addPileupJets -a tH2017 $file
   else
     if [[ "$HGTD" == true ]] ; then
-      simpleAnalysis -s mu=200,useHGTD0 -a tH2017 $file
+      simpleAnalysis -s mu=200,useHGTD0,addPileupJets -a tH2017 $file
     else
-      simpleAnalysis -s mu=200 -a tH2017 $file
+      simpleAnalysis -s mu=200,addPileupJets -a tH2017 $file
     fi
   fi
 fi
