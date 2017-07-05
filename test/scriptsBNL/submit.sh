@@ -49,7 +49,19 @@ for sample in "${samples[@]}" ; do
   fi  
   
   # Get missing files
-  files=($(./mergeBatchOutput.sh -cM $sample))
+  if [[ "$smearing" == false ]] ; then 
+    files=($(./mergeBatchOutput.sh -cM $sample))
+  else
+    if [[ "$TC" == false ]] ; then
+      files=($(./mergeBatchOutput.sh -cM $sample -s -noTC))
+    else
+      if [[ "$HGTD" == true ]] ; then
+        files=($(./mergeBatchOutput.sh -cM $sample -s -HGTD))
+      else
+        files=($(./mergeBatchOutput.sh -cM $sample -s))
+      fi
+    fi
+  fi
   
   # Loop over input files and submit jobs
   job=0
