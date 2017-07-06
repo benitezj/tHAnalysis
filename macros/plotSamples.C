@@ -4,7 +4,7 @@ void plotSamples(TString histo="Nbjets",
 		 TString inputpath="/data/tHAnalysis/July1", 
 		 TString outpath="./Plots"){
  
-  //LUMI=0;//set to 0 for shape comparisons
+  LUMI=0;//set to 0 for shape comparisons
  
   SetAtlasStyle();
   gStyle->SetPalette(1,0);

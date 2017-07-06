@@ -1,4 +1,10 @@
-export PROD=/nfs/uiowapc/data/tHAnalysis/July5
+export PROD=/nfs/uiowapc/data/tHAnalysis/July6
+
+rm -f  $PROD/tH2017_tHqb.root
+rm -f  $PROD/tH2017_tWH.root 
+rm -f  $PROD/tH2017_ttH_semilep.root 
+rm -f  $PROD/tH2017_ttH_dilep.root
+rm -f  $PROD/tH2017_ttbar.root
 
 hadd $PROD/tH2017_tHqb.root $PROD/tH/*.root
 hadd $PROD/tH2017_tWH.root $PROD/tWH/*.root 
