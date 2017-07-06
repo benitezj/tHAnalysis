@@ -11,7 +11,7 @@ echo "Processing: $file ..."
 echo "Filename = $filename"
 
 
-HOME=/direct/usatlas+u/sargyrop/tHFramework
+HOME=/direct/usatlas+u/$USER/tHFramework
 cd $HOME
 
 OUTPUTDIR=$HOME/OutputRootFiles
