@@ -11,7 +11,7 @@ void updateHistNames(){
   TFile *file = TFile::Open(fileName);
   TList *histoList = (TList*)file->GetListOfKeys(); 
 
-  std::ofstream output("macros/listOfHistos.txt");
+  std::ofstream output("tHAnalysis/macros/listOfHistos.txt");
 
   std::cout<<"updating listOfHistos.txt"<<std::endl; 
 
