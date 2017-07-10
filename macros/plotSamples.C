@@ -9,7 +9,8 @@ void plotSamples(TString histo="Nbjets",
   SetAtlasStyle();
   gStyle->SetPalette(1,0);
     
-  std::vector<std::string> m_bkgs={"tHqb","tWH","ttH_dilep","ttH_semilep","ttbar"};//
+  //std::vector<std::string> m_bkgs={"tHqb","tWH","ttH_dilep","ttH_semilep","ttbar"};//
+  std::vector<std::string> m_bkgs={"tHqb","ttbar"};
   std::map<std::string,int> color;
   color["ttbar"]=1;
   color["tHqb"]=2;
