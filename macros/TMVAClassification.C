@@ -18,7 +18,7 @@
 #include "TMVA/Tools.h"
 #endif
 
-void TMVAClassification(TString Production="/data/tHAnalysis/July10", TString Region = "Nbjets==3" )
+void TMVAClassification(TString Production="/data/tHAnalysis/July10", TString Region = "Nbjets==4" )
 {
 
   // Input paths
@@ -42,17 +42,15 @@ void TMVAClassification(TString Production="/data/tHAnalysis/July10", TString Re
   factory->AddVariable( "lep_pt","lep_pt", "GeV", 'F' );
   factory->AddVariable( "b1_pt","b1_pt", "GeV", 'F' );
 
-  factory->AddVariable( "dR_R1_H3","dR_R1_H3", "", 'F' );
   factory->AddVariable( "dR_lep_b1NotH","dR_lep_b1NotH", "", 'F' );
   factory->AddVariable( "dR_H3_b1NotH","dR_H3_b1NotH", "", 'F' );
 
-  factory->AddVariable( "dEta_R1_H3","dEta_R1_H3", "", 'F' );
   factory->AddVariable( "dEta_lep_b1NotH","dEta_lep_b1NotH", "", 'F' );
   factory->AddVariable( "dEta_H3_b1NotH","dEta_H3_b1NotH", "", 'F' );
   
-
   //  factory->AddVariable( "","", "", 'F' );
   
+
   // // //Read training and test data
   // TString fnameS = "/data/tHAnalysis/July10/tH/tuple_0.root";
   // TString fnameB = "/data/tHAnalysis/July10/mc15_13TeV.410501.PowhegPythia8EvtGen_A14_ttbar_hdamp258p75_nonallhad.merge.DAOD_TRUTH3.e5458_p2949/tuple_0.root";      
