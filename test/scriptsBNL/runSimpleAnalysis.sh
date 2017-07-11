@@ -5,6 +5,7 @@ sample=$2
 smear=$3
 TC=$4
 HGTD=$5
+NTUPLE=$6
 
 filename=$(echo $file | awk 'BEGIN {FS="/"} ; {print $NF}')
 echo "Processing: $file ..."
@@ -46,16 +47,17 @@ cp $file .
 # run simpleAnalysis
 echo "Running on file: $file"
 
+
 if [[ "$smear" == false ]] ; then 
-  simpleAnalysis -a tH2017 $file
+    simpleAnalysis -a tH2017 $NTUPLE $file
 else
   if [[ "$TC" == false ]] ; then
-    simpleAnalysis -s mu=200,noTrackConfirm,addPileupJets -a tH2017 $file
+    simpleAnalysis -s mu=200,noTrackConfirm,addPileupJets -a tH2017 $NTUPLE $file
   else
     if [[ "$HGTD" == true ]] ; then
-      simpleAnalysis -s mu=200,useHGTD0,addPileupJets -a tH2017 $file
+      simpleAnalysis -s mu=200,useHGTD0,addPileupJets -a tH2017 $NTUPLE $file
     else
-      simpleAnalysis -s mu=200,addPileupJets -a tH2017 $file
+      simpleAnalysis -s mu=200,addPileupJets -a tH2017 $NTUPLE $file
     fi
   fi
 fi

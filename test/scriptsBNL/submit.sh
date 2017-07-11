@@ -5,6 +5,7 @@ samples=(tH)
 smearing=false
 trackConfirm=true
 HGTD=false
+ntup=""
 
 while [[ $# > 0 ]] ; do
   arg="$1"
@@ -15,6 +16,8 @@ while [[ $# > 0 ]] ; do
     trackConfirm=false ;;
     -HGTD)
     HGTD=true ;;
+    -n)
+    ntup="-n" ;;
   esac
   shift   
 done
@@ -75,6 +78,7 @@ for sample in "${samples[@]}" ; do
     sed -i "s|SMEAR|$smearing|g" temp.sub
     sed -i "s|TC|$trackConfirm|g" temp.sub
     sed -i "s|HGTD|$HGTD|g" temp.sub
+    sed -i "s|NTUPLE|$ntup|g" temp.sub
     condor_submit temp.sub
     rm -f temp.sub
     let job=$job+1
