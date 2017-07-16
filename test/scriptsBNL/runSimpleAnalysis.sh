@@ -23,7 +23,7 @@ if [[ "$smear" == false ]] ; then
   OUTPUTDIR=$OUTPUTDIR/mu0/$sample
 else
   dirname="mu200"
-  if [[ "$trackConfirm" == false ]] ; then
+  if [[ "$TC" == false ]] ; then
     dirname+="_noTC"
   else
     dirname+="_TC"
@@ -80,6 +80,7 @@ simpleAnalysis $commandString
 # copy to output directory
 if [ -f tH2017.root ] ; then
   outputname=$(echo $filename | awk 'BEGIN {FS=".pool"} ; {print $1}')
+  echo "Copy file to: $OUTPUTDIR"
   mv tH2017.root $OUTPUTDIR/$outputname.root
   cd $HOME
 else
