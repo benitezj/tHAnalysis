@@ -85,7 +85,7 @@ for sample in "${samples[@]}" ; do
     files=($(./mergeBatchOutput.sh -cM $sample))
   else
     smearString="-s"
-    if [[ "$TC" == false ]] ; then
+    if [[ "$trackConfirm" == false ]] ; then
       smearString+=" -noTC"
     fi
     if [[ "$HGTD" == true ]] ; then
