@@ -5,7 +5,9 @@ sample=$2
 smear=$3
 TC=$4
 HGTD=$5
-NTUPLE=$6
+EFFSCHEME=$6
+PUEFF=$7
+NTUPLE=$8
 
 filename=$(echo $file | awk 'BEGIN {FS="/"} ; {print $NF}')
 echo "Processing: $file ..."
@@ -20,15 +22,21 @@ OUTPUTDIR=$HOME/OutputRootFiles
 if [[ "$smear" == false ]] ; then 
   OUTPUTDIR=$OUTPUTDIR/mu0/$sample
 else
-  if [[ "$TC" == false ]] ; then
-    OUTPUTDIR=$OUTPUTDIR/mu200_noTC/$sample
+  dirname="mu200"
+  if [[ "$trackConfirm" == false ]] ; then
+    dirname+="_noTC"
   else
-    if [[ "$HGTD" == true ]] ; then
-      OUTPUTDIR=$OUTPUTDIR/mu200_TC_HGTD/$sample
-    else
-      OUTPUTDIR=$OUTPUTDIR/mu200_TC/$sample
+    dirname+="_TC"
+    if [[ "$EFFSCHEME" = "PU" ]] ; then
+      dirname+="_PU$PUEFF"
+    elif [[ "$EFFSCHEME" = "HS" ]] ; then
+      dirname+="_HS$PUEFF"
     fi
+  fi 
+  if [[ "$HGTD" == true ]] ; then 
+    dirname+="_HGTD"
   fi
+  OUTPUTDIR=$OUTPUTDIR/$dirname/$sample
 fi
 
 if [ ! -d $OUTPUTDIR ] ; then
@@ -47,20 +55,27 @@ cp $file .
 # run simpleAnalysis
 echo "Running on file: $file"
 
-
-if [[ "$smear" == false ]] ; then 
-    simpleAnalysis -a tH2017 $NTUPLE $file
-else
+# build smearing string
+if [[ "$smear" == true ]] ; then 
+  # Create submission command based on options provided
+  smearString="-s mu=200,addPileupJets"  
   if [[ "$TC" == false ]] ; then
-    simpleAnalysis -s mu=200,noTrackConfirm,addPileupJets -a tH2017 $NTUPLE $file
-  else
-    if [[ "$HGTD" == true ]] ; then
-      simpleAnalysis -s mu=200,useHGTD0,addPileupJets -a tH2017 $NTUPLE $file
-    else
-      simpleAnalysis -s mu=200,addPileupJets -a tH2017 $NTUPLE $file
-    fi
+    smearString+=",noTrackConfirm"
+  fi
+  if [[ "$HGTD" == true ]] ; then
+    smearString+=",useHGTD0"
+  fi
+  if [[ "$EFFSCHEME" == "HS" ]] ; then
+    smearString+=",HSeff=$PUEFF"
+  elif [[ "$EFFSCHEME" == "PU" ]] ; then
+    smearString+=",PUeff=$PUEFF"
   fi
 fi
+
+# buld command string
+commandString="$smearString -a tH2017 $NTUPLE $file"
+echo "==> Running simpleAnalysis $commandString"
+simpleAnalysis $commandString
 
 # copy to output directory
 if [ -f tH2017.root ] ; then

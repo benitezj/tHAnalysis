@@ -1,0 +1,28 @@
+# mu=0
+./submit.sh
+
+# mu=200 no track confirmation
+./submit.sh -s -noTC
+
+# mu=200 track confirmation const PU efficiency 2%
+./submit.sh -s
+
+# mu=200 track confirmation const PU efficiency 2% + HGTD
+./submit.sh -s -HGTD -PU 0.02
+
+# mu=200 track confirmation const PU efficiency 5% + HGTD
+./submit.sh -s -HGTD -PU 0.05
+
+# mu=200 track confirmation const PU efficiency 10% + HGTD
+./submit.sh -s -HGTD -PU 0.10
+
+# mu=200 track confirmation const HS efficiency 70% + HGTD
+./submit.sh -s -HGTD -HS 0.70
+
+# mu=200 track confirmation const HS efficiency 80% + HGTD
+./submit.sh -s -HGTD -HS 0.80
+
+# mu=200 track confirmation const HS efficiency 90% + HGTD
+./submit.sh -s -HGTD -HS 0.90
+
+

@@ -1,7 +1,10 @@
 #!/bin/bash
 
+# Sample declaration
 #samples=(ttbar tWH tH ttH_dilep ttH_semilep)
 samples=(tH)
+
+# Default options
 smearing=false
 trackConfirm=true
 HGTD=false
@@ -18,9 +21,35 @@ while [[ $# > 0 ]] ; do
     HGTD=true ;;
     -n)
     ntup="-n" ;;
+    -HS)
+    effScheme="HS"
+    puEff=$2
+    shift ;;
+    -PU)
+    effScheme="PU"
+    puEff=$2
+    shift ;;
+    *)
+    echo "Unknown option: $arg" 
+    exit 1 ;;
   esac
   shift   
 done
+
+# Check whether supported HS and PU schemes have been provided
+if [[ "$smearing" == true ]] ; then
+  if [[ "$effScheme" == "PU" && "$puEff" != "0.02" && "$puEff" != "0.05" && "$puEff" != "0.10" ]] ; then
+    echo "Unsupported PU scheme: $puEff"
+    echo "Supported values: 0.02, 0.05, 0.10"
+    exit 2
+  fi
+  if [[ "$effScheme" == "HS" && "$puEff" != "0.70" && "$puEff" != "0.80" && "$puEff" != "0.90" ]] ; then
+    echo "Unsupported HS scheme: $puEff"
+    echo "Supported values: 0.70, 0.80, 0.90"
+    exit 3
+  fi
+fi
+
 
 # Set up directory structure - done automatically for BNL and uiowapc
 BASEDIR=$(echo $PWD | awk 'BEGIN {FS="/tHAnalysis"} ; {print $1}')
@@ -55,15 +84,19 @@ for sample in "${samples[@]}" ; do
   if [[ "$smearing" == false ]] ; then 
     files=($(./mergeBatchOutput.sh -cM $sample))
   else
+    smearString="-s"
     if [[ "$TC" == false ]] ; then
-      files=($(./mergeBatchOutput.sh -cM $sample -s -noTC))
-    else
-      if [[ "$HGTD" == true ]] ; then
-        files=($(./mergeBatchOutput.sh -cM $sample -s -HGTD))
-      else
-        files=($(./mergeBatchOutput.sh -cM $sample -s))
-      fi
+      smearString+=" -noTC"
     fi
+    if [[ "$HGTD" == true ]] ; then
+      smearString+=" -HGTD"
+    fi
+    if [[ "$effScheme" == "HS" ]] ; then
+      smearString+=" -HS $puEff"
+    elif [[ "$effScheme" == "PU" ]] ; then
+      smearString+=" -PU $puEff"  
+    fi
+    files=($(./mergeBatchOutput.sh -cM $sample $smearString))
   fi
   
   # Loop over input files and submit jobs
@@ -79,6 +112,8 @@ for sample in "${samples[@]}" ; do
     sed -i "s|TC|$trackConfirm|g" temp.sub
     sed -i "s|HGTD|$HGTD|g" temp.sub
     sed -i "s|NTUPLE|$ntup|g" temp.sub
+    sed -i "s|EFFSCHEME|$effScheme|g" temp.sub
+    sed -i "s|PUEFF|$puEff|g" temp.sub
     condor_submit temp.sub
     rm -f temp.sub
     let job=$job+1

@@ -75,6 +75,19 @@ while [[ $# > 0 ]] ; do
     trackConfirm=false ;;
     -HGTD)
     HGTD=true ;;
+    -n)
+    ntup="-n" ;;
+    -HS)
+    effScheme="HS"
+    puEff=$2
+    shift ;;
+    -PU)
+    effScheme="PU"
+    puEff=$2
+    shift ;;
+    *)
+    echo "Unknown option: $arg" 
+    exit 1 ;;
   esac
   shift   
 done
@@ -83,14 +96,28 @@ done
 if [[ "$smearing" == false ]] ; then
   base_dir=/usatlas/u/$USER/tHFramework/OutputRootFiles/mu0
 else
+  # build directory name from options
+  dirname="mu200"
   if [[ "$trackConfirm" == false ]] ; then
-    base_dir=/usatlas/u/$USER/tHFramework/OutputRootFiles/mu200_noTC
+    dirname+="_noTC"
   else
-    base_dir=/usatlas/u/$USER/tHFramework/OutputRootFiles/mu200_TC
+    dirname+="_TC"
+    if [[ "$effScheme" = "PU" ]] ; then
+      dirname+="_PU$puEff"
+    elif [[ "$effScheme" = "HS" ]] ; then
+      dirname+="_HS$puEff"
+    fi
   fi 
   if [[ "$HGTD" == true ]] ; then 
-    base_dir=$base_dir'_HGTD'
+    dirname+="_HGTD"
   fi
+  
+  base_dir=/usatlas/u/$USER/tHFramework/OutputRootFiles/$dirname
+fi
+
+# Create directory if it doesn't exist
+if [ ! -d $base_dir ] ; then
+  mkdir $base_dir
 fi
 cd $base_dir
 
