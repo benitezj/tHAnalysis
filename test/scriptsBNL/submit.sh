@@ -9,6 +9,8 @@ smearing=false
 trackConfirm=true
 HGTD=false
 ntup=""
+effScheme="PU"
+puEff=0.02
 
 while [[ $# > 0 ]] ; do
   arg="$1"
