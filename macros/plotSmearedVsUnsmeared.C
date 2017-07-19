@@ -177,15 +177,15 @@ void plotSmearedVsUnsmeared() {
     TH1F *h9 = (TH1F*)f9->Get(dist.histName);
   
     // Histogram cosmetics
-    Histogram H1 = {h1, dist, 1, 24, "#mu=0", false};
-    Histogram H2 = {h2, dist, kRed, 25, "#mu=200 - no TC", false};
-    Histogram H3 = {h3, dist, kMagenta, 26, "#mu=200 - TC", false};
-    Histogram H4 = {h4, dist, kMagenta+3, 27, "#mu=200 - TC + HGTD", false};
-    Histogram H5 = {h5, dist, kMagenta+3, 28, "#mu=200 - HGTD PU=5%", false};
-    Histogram H6 = {h6, dist, kMagenta+3, 32, "#mu=200 - HGTD PU=10%", false};
-    Histogram H7 = {h7, dist, kOrange+3, 27, "#mu=200 - HGTD HS=70%", false};
-    Histogram H8 = {h8, dist, kOrange+3, 28, "#mu=200 - HGTD HS=80%", false};
-    Histogram H9 = {h9, dist, kOrange+3, 32, "#mu=200 - HGTD HS=90%", false};
+    Histogram H1 = {h1, dist, 1, 24, "#mu=0", true};
+    Histogram H2 = {h2, dist, kRed, 25, "#mu=200 - no TC", true};
+    Histogram H3 = {h3, dist, kMagenta, 26, "#mu=200 - TC", true};
+    Histogram H4 = {h4, dist, kMagenta+3, 27, "#mu=200 - TC + HGTD", true};
+    Histogram H5 = {h5, dist, kMagenta+3, 28, "#mu=200 - HGTD PU=5%", true};
+    Histogram H6 = {h6, dist, kMagenta+3, 32, "#mu=200 - HGTD PU=10%", true};
+    Histogram H7 = {h7, dist, kOrange+3, 27, "#mu=200 - HGTD HS=70%", true};
+    Histogram H8 = {h8, dist, kOrange+3, 28, "#mu=200 - HGTD HS=80%", true};
+    Histogram H9 = {h9, dist, kOrange+3, 32, "#mu=200 - HGTD HS=90%", true};
     
     // Histograms to plot on the same canvas
     vector<Histogram> histograms = {H1, H2, H3, H4, H5, H6, H7, H8, H9};
