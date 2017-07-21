@@ -143,7 +143,9 @@ void plotSmearedVsUnsmeared() {
   vector<Distribution> dists = { {"Njets_HGTD_nocuts", "N_{jets} in HGTD", {0,10}, {0,1500}, 1, false}, 
   				 {"Nbjets_HGTD_nocuts", "N_{b-jets} in HGTD", {0,5}, {0,1500}, 1, false}, 
 				 {"H3_m_SRB3", "SRB3 m(b#bar{b}) [GeV]", {0,350}, {0,1500}, 2, false},
-				 {"jfwd_eta_SRB3", "SRB3 #eta(most forward jet)", {0,4}, {0,1500}, 1, false}
+				 {"jfwd_eta_SRB3", "SRB3 #eta(most forward jet)", {0,4}, {0,1500}, 1, false},
+				 {"jfwd_eta_SRB4", "SRB4 #eta(most forward jet)", {0,4}, {0,1500}, 1, false},
+				 {"Njets_SRB3", "N_{b-jets}", {-0.5,5.5}, {0,1500}, 1, false},
 			       };
 
   TFile *f1 = TFile::Open(TString::Format("/usatlas/u/sargyrop/tHFramework/OutputRootFiles/mu0/%s/%s.root", 

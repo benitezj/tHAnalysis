@@ -112,11 +112,11 @@ void plotCutEfficiency() {
   TString dir = "/usatlas/u/sargyrop/tHFramework/OutputRootFiles";
   
   // samples
-  TFile *f_bg_ttbar  = TFile::Open("/usatlas/u/sargyrop/tHFramework/OutputRootFiles/mu0/ttbar/ttbar.root", "read");
-  TFile *f_bg_ttH_sl = TFile::Open("/usatlas/u/sargyrop/tHFramework/OutputRootFiles/mu0/ttH_semilep/ttH_semilep.root", "read");
-  TFile *f_bg_ttH_dl = TFile::Open("/usatlas/u/sargyrop/tHFramework/OutputRootFiles/mu0/ttH_dilep/ttH_dilep.root", "read");
-  TFile *f_sg_tH     = TFile::Open("/usatlas/u/sargyrop/tHFramework/OutputRootFiles/mu0/tH/tH.root", "read");
-  TFile *f_sg_tWH    = TFile::Open("/usatlas/u/sargyrop/tHFramework/OutputRootFiles/mu0/tWH/tWH.root", "read");
+  TFile *f_bg_ttbar  = TFile::Open("/usatlas/u/sargyrop/tHFramework/OutputRootFiles/mu200_TC/ttbar/ttbar.root", "read");
+  TFile *f_bg_ttH_sl = TFile::Open("/usatlas/u/sargyrop/tHFramework/OutputRootFiles/mu200_TC/ttH_semilep/ttH_semilep.root", "read");
+  TFile *f_bg_ttH_dl = TFile::Open("/usatlas/u/sargyrop/tHFramework/OutputRootFiles/mu200_TC/ttH_dilep/ttH_dilep.root", "read");
+  TFile *f_sg_tH     = TFile::Open("/usatlas/u/sargyrop/tHFramework/OutputRootFiles/mu200_TC/tH/tH.root", "read");
+  TFile *f_sg_tWH    = TFile::Open("/usatlas/u/sargyrop/tHFramework/OutputRootFiles/mu200_TC/tWH/tWH.root", "read");
   
   
   // Normalization
@@ -126,23 +126,27 @@ void plotCutEfficiency() {
   TH1F *h_sg_tH     = (TH1F*)f_sg_tH->Get("events");
   TH1F *h_sg_tWH    = (TH1F*)f_sg_tWH->Get("events");
   
-  float scale_ttbar  = 3000.*452.2944528/h_bg_ttbar->GetBinContent(2);
-  float scale_ttH_sl = 3000.*0.22276/h_bg_ttH_sl->GetBinContent(2);
-  float scale_ttH_dl = 3000.*0.05343/h_bg_ttH_dl->GetBinContent(2);
-  float scale_tH     = 3000.*0.054157/h_sg_tH->GetBinContent(2);
-  float scale_tWH    = 3000.*0.014425/h_sg_tWH->GetBinContent(2);
+  float scale_ttbar  = 3000000.*452.2944528/h_bg_ttbar->GetBinContent(2);
+  float scale_ttH_sl = 3000000.*0.22276/h_bg_ttH_sl->GetBinContent(2);
+  float scale_ttH_dl = 3000000.*0.05343/h_bg_ttH_dl->GetBinContent(2);
+  float scale_tH     = 3000000.*0.054157/h_sg_tH->GetBinContent(2);
+  float scale_tWH    = 3000000.*0.014425/h_sg_tWH->GetBinContent(2);
   
   // Get TH1 
-  std::vector<std::pair<TString, CutType>> dists = { {"jfwd_eta_SRB3", CutType::LOW},
-  						     {"jfwd_eta_SRB3", CutType::HIGH},
-						     {"jfwd_eta_SRB4", CutType::LOW},
-  						     {"jfwd_eta_SRB4", CutType::HIGH},
-						     {"mindEta_ljets_bjets", CutType::LOW},
+  std::vector<std::pair<TString, CutType>> dists = { {"mindEta_ljets_bjets", CutType::LOW},
 						     {"mindEta_ljets_bjets", CutType::HIGH},
 						     {"maxdEta_ljets_bjets", CutType::LOW},
 						     {"maxdEta_ljets_bjets", CutType::HIGH},
 						     {"dEta_jfwd_b1", CutType::LOW},
-						     {"dEta_jfwd_b1", CutType::HIGH} };
+						     {"dEta_jfwd_b1", CutType::HIGH},
+						     {"H3_m", CutType::LOW},
+						     {"H3_m", CutType::LOW},
+						     {"H3_m_SRB3", CutType::LOW},
+						     {"H3_m_SRB3", CutType::HIGH},
+						     {"HT_SRB3", CutType::LOW},
+						     {"HT_SRB3", CutType::HIGH}, 
+						     {"MET_SRB3", CutType::LOW},
+						     {"MET_SRB3", CutType::HIGH} };
   
   // Loop over distributions and make efficiency plots
   for (auto dist : dists) {
