@@ -109,9 +109,6 @@ else
   fi  
   if [[ "$trackConfirm" == false ]] ; then
     dirname+="_noTC"
-  fi  
-  if [[ "$trackConfirm" == false ]] ; then
-    dirname+="_noTC"
   else
     dirname+="_TC"
     if [[ "$effScheme" = "PU" ]] ; then
