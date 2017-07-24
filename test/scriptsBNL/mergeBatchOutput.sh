@@ -58,6 +58,7 @@ checkMissing=false
 smearing=false
 trackConfirm=true
 HGTD=false
+addPUJets=true
 
 # Get the options
 while [[ $# > 0 ]] ; do
@@ -73,6 +74,8 @@ while [[ $# > 0 ]] ; do
     smearing=true ;;
     -noTC)
     trackConfirm=false ;;
+    -noPUJets)
+    addPUJets=false;;
     -HGTD)
     HGTD=true ;;
     -n)
@@ -98,6 +101,12 @@ if [[ "$smearing" == false ]] ; then
 else
   # build directory name from options
   dirname="mu200"
+  if [[ "$addPUJets" == false ]] ; then
+    dirname+="_noPUJets"
+  fi  
+  if [[ "$trackConfirm" == false ]] ; then
+    dirname+="_noTC"
+  fi  
   if [[ "$trackConfirm" == false ]] ; then
     dirname+="_noTC"
   else

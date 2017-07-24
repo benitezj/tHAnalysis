@@ -3,11 +3,12 @@
 file=$1
 sample=$2
 smear=$3
-TC=$4
-HGTD=$5
-EFFSCHEME=$6
-PUEFF=$7
-NTUPLE=$8
+PUJets=$4
+TC=$5
+HGTD=$6
+EFFSCHEME=$7
+PUEFF=$8
+NTUPLE=$9
 
 filename=$(echo $file | awk 'BEGIN {FS="/"} ; {print $NF}')
 echo "Processing: $file ..."
@@ -58,7 +59,10 @@ echo "Running on file: $file"
 # build smearing string
 if [[ "$smear" == true ]] ; then 
   # Create submission command based on options provided
-  smearString="-s mu=200,addPileupJets"  
+  smearString="-s mu=200"
+  if [[ "$PUJets" == true ]] ; then
+    smearString+=",addPileupJets"  
+  fi
   if [[ "$TC" == false ]] ; then
     smearString+=",noTrackConfirm"
   fi

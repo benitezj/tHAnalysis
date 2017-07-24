@@ -1,11 +1,12 @@
 #!/bin/bash
 
 # Sample declaration
-#samples=(ttbar tWH tH ttH_dilep ttH_semilep)
-samples=(tH)
+samples=(ttbar tWH tH ttH_dilep ttH_semilep)
+#samples=(tH)
 
 # Default options
 smearing=false
+addPUJets=true
 trackConfirm=true
 HGTD=false
 ntup=""
@@ -21,6 +22,8 @@ while [[ $# > 0 ]] ; do
     trackConfirm=false ;;
     -HGTD)
     HGTD=true ;;
+    -noPUJets)
+    addPUJets=false;;
     -n)
     ntup="-n" ;;
     -HS)
@@ -87,6 +90,9 @@ for sample in "${samples[@]}" ; do
     files=($(./mergeBatchOutput.sh -cM $sample))
   else
     smearString="-s"
+    if [[ "$addPUJets" == false ]] ; then
+      smearString+=" -noPUJets"
+    fi   
     if [[ "$trackConfirm" == false ]] ; then
       smearString+=" -noTC"
     fi
@@ -111,6 +117,7 @@ for sample in "${samples[@]}" ; do
     sed -i "s|LOGPATH|$LOGDIR|g" temp.sub
     sed -i "s|JOB|$job|g" temp.sub
     sed -i "s|SMEAR|$smearing|g" temp.sub
+    sed -i "s|PUJETS|$addPUJets|g" temp.sub
     sed -i "s|TC|$trackConfirm|g" temp.sub
     sed -i "s|HGTD|$HGTD|g" temp.sub
     sed -i "s|NTUPLE|$ntup|g" temp.sub

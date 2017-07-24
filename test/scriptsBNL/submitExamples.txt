@@ -1,11 +1,16 @@
 # mu=0
-./submit.sh
+./submit.sh -n
+
+# mu=200 no Pileup Jets - track confirmation const PU efficiency 2% (ITk only)
+./submit.sh -s -noPUJets -n
+
+
+# All options below are with PU jets
+# mu=200 track confirmation const PU efficiency 2% (ITk only)
+./submit.sh -s -n
 
 # mu=200 no track confirmation
 ./submit.sh -s -noTC
-
-# mu=200 track confirmation const PU efficiency 2%
-./submit.sh -s
 
 # mu=200 track confirmation const PU efficiency 2% + HGTD
 ./submit.sh -s -HGTD -PU 0.02
