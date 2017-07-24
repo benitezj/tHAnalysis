@@ -24,6 +24,9 @@ if [[ "$smear" == false ]] ; then
   OUTPUTDIR=$OUTPUTDIR/mu0/$sample
 else
   dirname="mu200"
+  if [[ "$PUJets" == false ]] ; then
+    dirname+="_noPUJets"
+  fi  
   if [[ "$TC" == false ]] ; then
     dirname+="_noTC"
   else
