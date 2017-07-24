@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Sample declaration
-samples=(ttbar tWH tH ttH_dilep ttH_semilep)
-#samples=(tH)
+#samples=(ttbar tWH tH ttH_dilep ttH_semilep)
+samples=(tH)
 
 # Default options
 smearing=false
@@ -125,8 +125,8 @@ for sample in "${samples[@]}" ; do
     sed -i "s|SMEAR|$smearing|g" temp.sub
     sed -i "s|PUJETS|$addPUJets|g" temp.sub
     sed -i "s|TC|$trackConfirm|g" temp.sub
-    sed -i "s|HGTD|$HGTDBTAG|g" temp.sub
-    sed -i "s|HGTDBTAG|$HGTD|g" temp.sub
+    sed -i "s|HGTD|$HGTD|" temp.sub
+    sed -i "s|BTAGHGTD|$HGTDBTAG|g" temp.sub
     sed -i "s|NTUPLE|$ntup|g" temp.sub
     sed -i "s|EFFSCHEME|$effScheme|g" temp.sub
     sed -i "s|PUEFF|$puEff|g" temp.sub

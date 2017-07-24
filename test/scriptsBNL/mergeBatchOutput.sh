@@ -121,10 +121,10 @@ else
     fi
   fi 
   if [[ "$HGTD" == true ]] ; then 
+    dirname+="_HGTD"
     if [[ "$HGTDBTAG" == true ]] ; then 
       dirname+="_HGTDbtag"
     fi
-    dirname+="_HGTD"
   fi
   
   base_dir=/usatlas/u/$USER/tHFramework/OutputRootFiles/$dirname

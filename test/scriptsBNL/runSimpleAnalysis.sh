@@ -9,7 +9,7 @@ HGTD=$6
 HGTDBTAG=$7
 EFFSCHEME=$8
 PUEFF=$9
-NTUPLE=$10
+NTUPLE=${10}
 
 filename=$(echo $file | awk 'BEGIN {FS="/"} ; {print $NF}')
 echo "Processing: $file ..."
