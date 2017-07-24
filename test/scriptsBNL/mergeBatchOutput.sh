@@ -58,6 +58,7 @@ checkMissing=false
 smearing=false
 trackConfirm=true
 HGTD=false
+HGTDBTAG=false
 addPUJets=true
 
 # Get the options
@@ -78,6 +79,8 @@ while [[ $# > 0 ]] ; do
     addPUJets=false;;
     -HGTD)
     HGTD=true ;;
+    -HGTDbtag)
+    HGTDBTAG=true ;;
     -n)
     ntup="-n" ;;
     -HS)
@@ -118,6 +121,9 @@ else
     fi
   fi 
   if [[ "$HGTD" == true ]] ; then 
+    if [[ "$HGTDBTAG" == true ]] ; then 
+      dirname+="_HGTDbtag"
+    fi
     dirname+="_HGTD"
   fi
   

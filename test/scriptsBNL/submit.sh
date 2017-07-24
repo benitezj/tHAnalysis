@@ -9,6 +9,7 @@ smearing=false
 addPUJets=true
 trackConfirm=true
 HGTD=false
+HGTDBTAG=false
 ntup=""
 effScheme="PU"
 puEff=0.02
@@ -22,6 +23,8 @@ while [[ $# > 0 ]] ; do
     trackConfirm=false ;;
     -HGTD)
     HGTD=true ;;
+    -HGTDbtag)
+    HGTDBTAG=true ;;    
     -noPUJets)
     addPUJets=false;;
     -n)
@@ -98,6 +101,9 @@ for sample in "${samples[@]}" ; do
     fi
     if [[ "$HGTD" == true ]] ; then
       smearString+=" -HGTD"
+      if [[ "$HGTDBTAG" == true ]] ; then 
+        smearString+=" -HGTDbtag"
+      fi
     fi
     if [[ "$effScheme" == "HS" ]] ; then
       smearString+=" -HS $puEff"
@@ -119,7 +125,8 @@ for sample in "${samples[@]}" ; do
     sed -i "s|SMEAR|$smearing|g" temp.sub
     sed -i "s|PUJETS|$addPUJets|g" temp.sub
     sed -i "s|TC|$trackConfirm|g" temp.sub
-    sed -i "s|HGTD|$HGTD|g" temp.sub
+    sed -i "s|HGTD|$HGTDBTAG|g" temp.sub
+    sed -i "s|HGTDBTAG|$HGTD|g" temp.sub
     sed -i "s|NTUPLE|$ntup|g" temp.sub
     sed -i "s|EFFSCHEME|$effScheme|g" temp.sub
     sed -i "s|PUEFF|$puEff|g" temp.sub

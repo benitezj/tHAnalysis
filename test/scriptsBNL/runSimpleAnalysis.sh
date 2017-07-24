@@ -6,9 +6,10 @@ smear=$3
 PUJets=$4
 TC=$5
 HGTD=$6
-EFFSCHEME=$7
-PUEFF=$8
-NTUPLE=$9
+HGTDBTAG=$7
+EFFSCHEME=$8
+PUEFF=$9
+NTUPLE=$10
 
 filename=$(echo $file | awk 'BEGIN {FS="/"} ; {print $NF}')
 echo "Processing: $file ..."
@@ -39,6 +40,9 @@ else
   fi 
   if [[ "$HGTD" == true ]] ; then 
     dirname+="_HGTD"
+    if [[ "$HGTDBTAG" == true ]] ; then 
+      dirname+="_HGTDbtag"
+    fi
   fi
   OUTPUTDIR=$OUTPUTDIR/$dirname/$sample
 fi
@@ -71,6 +75,9 @@ if [[ "$smear" == true ]] ; then
   fi
   if [[ "$HGTD" == true ]] ; then
     smearString+=",useHGTD0"
+    if [[ "$HGTDBTAG" == true ]] ; then 
+      smearString+=",useHGTDbtag"
+    fi
   fi
   if [[ "$EFFSCHEME" == "HS" ]] ; then
     smearString+=",HSeff=$PUEFF"
