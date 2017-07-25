@@ -28,8 +28,8 @@ std::pair<float,float> LLR(const TH1F *hSig, const TH1F *hBkg) {
   return LLR;
 }
 
-void calculateSignificance() {
-
+void calculateSignificanceLoop(const TString& setup) {
+  
   // Directory where input root files are stored
   TString dir = "/usatlas/u/sargyrop/tHFramework/OutputRootFiles";
   
@@ -50,11 +50,11 @@ void calculateSignificance() {
 				 "jfwd_eta_B4_Opt4" };
   
   // samples
-  TFile *f_bg_ttbar  = TFile::Open("/usatlas/u/sargyrop/tHFramework/OutputRootFiles/mu0/ttbar/ttbar.root", "read");
-  TFile *f_bg_ttH_sl = TFile::Open("/usatlas/u/sargyrop/tHFramework/OutputRootFiles/mu0/ttH_semilep/ttH_semilep.root", "read");
-  TFile *f_bg_ttH_dl = TFile::Open("/usatlas/u/sargyrop/tHFramework/OutputRootFiles/mu0/ttH_dilep/ttH_dilep.root", "read");
-  TFile *f_sg_tH     = TFile::Open("/usatlas/u/sargyrop/tHFramework/OutputRootFiles/mu0/tH/tH.root", "read");
-  TFile *f_sg_tWH    = TFile::Open("/usatlas/u/sargyrop/tHFramework/OutputRootFiles/mu0/tWH/tWH.root", "read");
+  TFile *f_bg_ttbar  = TFile::Open(TString::Format("%s/%s/ttbar/ttbar.root", dir.Data(), setup.Data()), "read");
+  TFile *f_bg_ttH_sl = TFile::Open(TString::Format("%s/%s/ttH_semilep/ttH_semilep.root", dir.Data(), setup.Data()), "read");
+  TFile *f_bg_ttH_dl = TFile::Open(TString::Format("%s/%s/ttH_dilep/ttH_dilep.root", dir.Data(), setup.Data()), "read");
+  TFile *f_sg_tH     = TFile::Open(TString::Format("%s/%s/tH/tH.root", dir.Data(), setup.Data()), "read");
+  TFile *f_sg_tWH    = TFile::Open(TString::Format("%s/%s/tWH/tWH.root", dir.Data(), setup.Data()), "read");
     
   // Normalization
   TH1F *h_bg_ttbar  = (TH1F*)f_bg_ttbar->Get("events");
@@ -91,9 +91,31 @@ void calculateSignificance() {
     h_sg_tH->Add(h_sg_tWH);
     
     std::pair<float,float> llr = LLR(h_sg_tH, h_bg_ttbar);
-    printf("Distribution:  %35s   -  LLR = %5.3f +- %3.3f\n", dist.Data(), llr.first, llr.second); 
+    printf("Distribution:  %35s   -  LLR = %6.5f +- %6.5f\n", dist.Data(), llr.first, llr.second); 
     
   }
 
 }
 
+void calculateSignificance() {
+
+  std::vector<TString> setup = {"mu0",
+  				"mu200_noPUJets_TC_PU0.02/",
+				"mu200_noTC",
+				"mu200_TC_PU0.02",
+				"mu200_TC_PU0.02_HGTD",
+				"mu200_TC_PU0.05_HGTD",
+				"mu200_TC_PU0.10_HGTD",
+				"mu200_TC_HS0.70_HGTD",
+				"mu200_TC_HS0.80_HGTD",
+				"mu200_TC_HS0.90_HGTD",
+				"mu200_TC_PU0.02_HGTD_HGTDbtag",
+				"mu200_TC_HS0.90_HGTD_HGTDbtag"
+				};
+  
+  for (auto s : setup) {
+    std::cout << "Calculating LLR for : " << s << std::endl;
+    calculateSignificanceLoop(s);
+  }
+
+}
