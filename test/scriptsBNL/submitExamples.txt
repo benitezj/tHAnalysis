@@ -43,4 +43,4 @@
 ####
 ./submit.sh -s -HGTD -HGTDbtag -PU 0.02
 
-
+./submit.sh -s -HGTD -HGTDbtag -HS 0.90

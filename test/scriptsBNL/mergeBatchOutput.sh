@@ -60,6 +60,8 @@ trackConfirm=true
 HGTD=false
 HGTDBTAG=false
 addPUJets=true
+effScheme="PU"
+puEff=0.02
 
 # Get the options
 while [[ $# > 0 ]] ; do
@@ -126,6 +128,8 @@ else
   
   base_dir=/usatlas/u/$USER/tHFramework/OutputRootFiles/$dirname
 fi
+
+echo "base_dir=$base_dir"
 
 # Create directory if it doesn't exist
 if [ ! -d $base_dir ] ; then

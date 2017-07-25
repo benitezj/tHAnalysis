@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Sample declaration
-#samples=(ttbar tWH tH ttH_dilep ttH_semilep)
-samples=(tH)
+samples=(ttbar tWH tH ttH_dilep ttH_semilep)
+#samples=(tH)
 
 # Default options
 smearing=false
