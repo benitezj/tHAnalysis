@@ -1,6 +1,6 @@
 #!/bin/bash
 if [[ "$#" != 1 ]] ; then
-  echo "Usage: ./submitExamples.sh submit|merge"
+  echo "Usage: ./submitExamples.sh submit|merge|check"
   exit 1
 fi
 
@@ -8,8 +8,10 @@ if [[ "$1" == "submit" ]] ; then
   command=./submit.sh
 elif [[ "$1" == "merge" ]] ; then
   command=./mergeBatchOutput.sh
+elif [[ "$1" == "check" ]] ; then
+  command="./mergeBatchOutput.sh -c" 
 else
-  echo "Usage: ./ubmitExamples.sh submit|merge"
+  echo "Usage: ./submitExamples.sh submit|merge|check"
   exit 2
 fi
 
