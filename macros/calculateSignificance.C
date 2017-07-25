@@ -28,27 +28,11 @@ std::pair<float,float> LLR(const TH1F *hSig, const TH1F *hBkg) {
   return LLR;
 }
 
-void calculateSignificanceLoop(const TString& setup) {
+std::pair<float,float> calculateSignificanceLoop(const TString& setup, const TString& dist) {
   
   // Directory where input root files are stored
   TString dir = "/usatlas/u/sargyrop/tHFramework/OutputRootFiles";
-  
-  // Distributions to use for calculating significance
-  std::vector<TString> dists = { "jfwd_eta_loose",
-  				 "jfwd_eta",
-  				 "jfwd_eta_SRB3",
-  			         "jfwd_eta_SRB4",
-				 "jfwd_eta_SRMbbH3_SRB3",
-				 "jfwd_eta_SRMbbH3_SRB4",
-				 "jfwd_eta_B3_Opt1",
-				 "jfwd_eta_B4_Opt1",
-				 "jfwd_eta_B3_Opt2",
-				 "jfwd_eta_B4_Opt2",
-				 "jfwd_eta_B3_Opt3",
-				 "jfwd_eta_B4_Opt3",
-				 "jfwd_eta_B3_Opt4",
-				 "jfwd_eta_B4_Opt4" };
-  
+   
   // samples
   TFile *f_bg_ttbar  = TFile::Open(TString::Format("%s/%s/ttbar/ttbar.root", dir.Data(), setup.Data()), "read");
   TFile *f_bg_ttH_sl = TFile::Open(TString::Format("%s/%s/ttH_semilep/ttH_semilep.root", dir.Data(), setup.Data()), "read");
@@ -69,36 +53,35 @@ void calculateSignificanceLoop(const TString& setup) {
   float scale_tH     = 3000.*0.054157/h_sg_tH->GetBinContent(2);
   float scale_tWH    = 3000.*0.014425/h_sg_tWH->GetBinContent(2);
     
-  // Loop over distributions and make efficiency plots
-  for (auto dist : dists) {
-    h_bg_ttbar  = (TH1F*)f_bg_ttbar->Get(TString::Format("%s", dist.Data()));
-    h_bg_ttH_sl = (TH1F*)f_bg_ttH_sl->Get(TString::Format("%s", dist.Data()));
-    h_bg_ttH_dl = (TH1F*)f_bg_ttH_dl->Get(TString::Format("%s", dist.Data()));
-    h_sg_tH     = (TH1F*)f_sg_tH->Get(TString::Format("%s", dist.Data()));
-    h_sg_tWH    = (TH1F*)f_sg_tWH->Get(TString::Format("%s", dist.Data()));
+  // Get Histograms 
+  h_bg_ttbar  = (TH1F*)f_bg_ttbar->Get(TString::Format("%s", dist.Data()));
+  h_bg_ttH_sl = (TH1F*)f_bg_ttH_sl->Get(TString::Format("%s", dist.Data()));
+  h_bg_ttH_dl = (TH1F*)f_bg_ttH_dl->Get(TString::Format("%s", dist.Data()));
+  h_sg_tH     = (TH1F*)f_sg_tH->Get(TString::Format("%s", dist.Data()));
+  h_sg_tWH    = (TH1F*)f_sg_tWH->Get(TString::Format("%s", dist.Data()));
+   
+  if (!h_bg_ttbar) return {};
     
-    if (!h_bg_ttbar) continue;
+  // Here we should normalize the histograms according to xsec and add tH+tWH in a single histogram and all bg in another histogram
+  h_bg_ttbar->Scale(scale_ttbar);
+  h_bg_ttH_sl->Scale(scale_ttH_sl);
+  h_bg_ttH_dl->Scale(scale_ttH_dl);
+  h_sg_tH->Scale(scale_tH);
+  h_sg_tWH->Scale(scale_tWH);
     
-    // Here we should normalize the histograms according to xsec and add tH+tWH in a single histogram and all bg in another histogram
-    h_bg_ttbar->Scale(scale_ttbar);
-    h_bg_ttH_sl->Scale(scale_ttH_sl);
-    h_bg_ttH_dl->Scale(scale_ttH_dl);
-    h_sg_tH->Scale(scale_tH);
-    h_sg_tWH->Scale(scale_tWH);
+  h_bg_ttbar->Add(h_bg_ttH_sl);
+  h_bg_ttbar->Add(h_bg_ttH_dl);
+  h_sg_tH->Add(h_sg_tWH);
     
-    h_bg_ttbar->Add(h_bg_ttH_sl);
-    h_bg_ttbar->Add(h_bg_ttH_dl);
-    h_sg_tH->Add(h_sg_tWH);
+  std::pair<float,float> llr = LLR(h_sg_tH, h_bg_ttbar);
+  //printf("Distribution:  %35s   -  LLR = %6.5f +- %6.5f\n", dist.Data(), llr.first, llr.second); 
     
-    std::pair<float,float> llr = LLR(h_sg_tH, h_bg_ttbar);
-    printf("Distribution:  %35s   -  LLR = %6.5f +- %6.5f\n", dist.Data(), llr.first, llr.second); 
-    
-  }
-
+  return llr;
 }
 
 void calculateSignificance() {
 
+  // Different setups used
   std::vector<TString> setup = {"mu0",
   				"mu200_noPUJets_TC_PU0.02/",
 				"mu200_noTC",
@@ -113,9 +96,22 @@ void calculateSignificance() {
 				"mu200_TC_HS0.90_HGTD_HGTDbtag"
 				};
   
+  // Distributions to use for calculating significance
+  std::vector<TString> dists = { "jfwd_eta_SRB3",
+  			         "jfwd_eta_SRB4",
+			       };
+   
   for (auto s : setup) {
     std::cout << "Calculating LLR for : " << s << std::endl;
-    calculateSignificanceLoop(s);
+    std::pair<float,float> sig, sigB3, sigB4;   
+    for (auto d : dists) {
+      sig = calculateSignificanceLoop(s, d);
+      if     (d.Contains("SRB3")) sigB3 = sig;
+      else if (d.Contains("SRB4")) sigB4 = sig;
+    }
+    float sum  = std::sqrt(std::pow(sigB3.first,2)+std::pow(sigB4.first,2));
+    float sumE = (sigB3.first*sigB3.second+sigB4.first*sigB4.second)/sum;
+    printf("Distribution:  %35s   -  LLR = %6.5f +- %6.5f\n", "Sum", sum, sumE); 
   }
 
 }
