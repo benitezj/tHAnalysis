@@ -83,7 +83,7 @@ void calculateSignificance() {
 
   // Different setups used
   std::vector<TString> setup = {"mu0",
-  				"mu200_noPUJets_TC_PU0.02/",
+  				"mu200_noPUJets_TC_PU0.02",
 				"mu200_noTC",
 				"mu200_TC_PU0.02",
 				"mu200_TC_PU0.02_HGTD",
