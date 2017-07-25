@@ -110,7 +110,7 @@ void calculateSignificance() {
       else if (d.Contains("SRB4")) sigB4 = sig;
     }
     float sum  = std::sqrt(std::pow(sigB3.first,2)+std::pow(sigB4.first,2));
-    float sumE = (sigB3.first*sigB3.second+sigB4.first*sigB4.second)/sum;
+    float sumE = std::sqrt(std::pow(sigB3.first*sigB3.second,2)+std::pow(sigB4.first*sigB4.second,2))/sum;
     printf("Distribution:  %35s   -  LLR = %6.5f +- %6.5f\n", "Sum", sum, sumE); 
   }
 
