@@ -17,7 +17,9 @@ checkMissing() {
 
 checkFinished() {
 
-  printf "${BLUE}Checking output files ...${NC}\n"
+  outputdir=$(echo $base_dir | awk 'BEGIN {FS="/"} ; {print $NF}')
+
+  printf "${BLUE}Checking output files: $outputdir ...${NC}\n"
   
   samples=(ttbar ttH_dilep ttH_semilep tH tWH)
   samplesdir=/usatlas/u/$USER/tHFramework/tHAnalysis/data/PathsBNL/TRUTH1
@@ -128,8 +130,6 @@ else
   
   base_dir=/usatlas/u/$USER/tHFramework/OutputRootFiles/$dirname
 fi
-
-echo "base_dir=$base_dir"
 
 # Create directory if it doesn't exist
 if [ ! -d $base_dir ] ; then
