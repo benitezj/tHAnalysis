@@ -2,7 +2,7 @@ Universe   = vanilla
 Notification = Never
 
 Executable = FWPATH/runSimpleAnalysis.sh
-Arguments  = FILE SAMPLE SMEAR PUJETS TC HGTD BTAGHGTD EFFSCHEME PUEFF NTUPLE
+Arguments  = FILE SAMPLE SMEAR PUJETS TC HGTD BTAGHGTD BTAGSCHEME EFFSCHEME PUEFF PUREJ NTUPLE
 
 GetEnv     = True
 

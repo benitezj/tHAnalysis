@@ -61,6 +61,8 @@ smearing=false
 trackConfirm=true
 HGTD=false
 HGTDBTAG=false
+btagscheme=""
+purej=false
 addPUJets=true
 effScheme="PU"
 puEff=0.02
@@ -84,7 +86,11 @@ while [[ $# > 0 ]] ; do
     -HGTD)
     HGTD=true ;;
     -HGTDbtag)
-    HGTDBTAG=true ;;
+    HGTDBTAG=true
+    btagscheme=$2
+    shift ;;
+    -purej)
+    purej=true;;
     -n)
     ntup="-n" ;;
     -HS)
@@ -125,6 +131,12 @@ else
     dirname+="_HGTD"
     if [[ "$HGTDBTAG" == true ]] ; then 
       dirname+="_HGTDbtag"
+      if [[ "$btagscheme" != "" ]] ; then
+	  dirname+="_$btagscheme"
+      fi
+    fi
+    if [[ "$purej" == true ]] ; then 
+      dirname+="_purej"
     fi
   fi
   

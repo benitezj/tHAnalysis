@@ -10,6 +10,8 @@ addPUJets=true
 trackConfirm=true
 HGTD=false
 HGTDBTAG=false
+btagscheme=""
+purej=false
 ntup=""
 effScheme="PU"
 puEff=0.02
@@ -24,11 +26,15 @@ while [[ $# > 0 ]] ; do
     -HGTD)
     HGTD=true ;;
     -HGTDbtag)
-    HGTDBTAG=true ;;    
+    HGTDBTAG=true
+    btagscheme=$2
+    shift ;;
     -noPUJets)
     addPUJets=false;;
     -n)
     ntup="-n" ;;
+    -purej)
+    purej=true ;;
     -HS)
     effScheme="HS"
     puEff=$2
@@ -81,38 +87,42 @@ cd $SCRIPTDIR
 
 # Loop over samples
 for sample in "${samples[@]}" ; do
- 
-  if [[ $BASEDIR == *"usatlas"* ]] ; then 
-    pathFile=../../data/PathsBNL/TRUTH1/$sample.txt
-  else
-    pathFile=../../data/PathsIowa/$sample.txt 
-  fi  
-  
+    
+    if [[ $BASEDIR == *"usatlas"* ]] ; then 
+	pathFile=../../data/PathsBNL/TRUTH1/$sample.txt
+    else
+	pathFile=../../data/PathsIowa/$sample.txt 
+    fi  
+    
   # Get missing files
-  if [[ "$smearing" == false ]] ; then 
-    files=($(./mergeBatchOutput.sh -cM $sample))
-  else
-    smearString="-s"
-    if [[ "$addPUJets" == false ]] ; then
-      smearString+=" -noPUJets"
-    fi   
-    if [[ "$trackConfirm" == false ]] ; then
-      smearString+=" -noTC"
+    if [[ "$smearing" == false ]] ; then 
+	files=($(./mergeBatchOutput.sh -cM $sample))
+    else
+	smearString="-s"
+	if [[ "$addPUJets" == false ]] ; then
+	    smearString+=" -noPUJets"
+	fi   
+	if [[ "$trackConfirm" == false ]] ; then
+	    smearString+=" -noTC"
+	fi
+	if [[ "$HGTD" == true ]] ; then
+	    smearString+=" -HGTD"
+
+	    if [[ "$HGTDBTAG" == true ]] ; then 
+		smearString+=" -HGTDbtag $btagscheme"
+	    fi
+	    if [[ "$purej" == true ]] ; then 
+		smearString+=" -purej"
+	    fi
+	fi
+	if [[ "$effScheme" == "HS" ]] ; then
+	    smearString+=" -HS $puEff"
+	elif [[ "$effScheme" == "PU" ]] ; then
+	    smearString+=" -PU $puEff"  
+	fi
+	files=($(./mergeBatchOutput.sh -cM $sample $smearString))
     fi
-    if [[ "$HGTD" == true ]] ; then
-      smearString+=" -HGTD"
-      if [[ "$HGTDBTAG" == true ]] ; then 
-        smearString+=" -HGTDbtag"
-      fi
-    fi
-    if [[ "$effScheme" == "HS" ]] ; then
-      smearString+=" -HS $puEff"
-    elif [[ "$effScheme" == "PU" ]] ; then
-      smearString+=" -PU $puEff"  
-    fi
-    files=($(./mergeBatchOutput.sh -cM $sample $smearString))
-  fi
-  
+    
   # Loop over input files and submit jobs
   job=0
   for file in "${files[@]}" ; do 
@@ -127,9 +137,11 @@ for sample in "${samples[@]}" ; do
     sed -i "s|TC|$trackConfirm|g" temp.sub
     sed -i "s|HGTD|$HGTD|" temp.sub
     sed -i "s|BTAGHGTD|$HGTDBTAG|g" temp.sub
+    sed -i "s|BTAGSCHEME|$btagscheme|g" temp.sub
     sed -i "s|NTUPLE|$ntup|g" temp.sub
     sed -i "s|EFFSCHEME|$effScheme|g" temp.sub
     sed -i "s|PUEFF|$puEff|g" temp.sub
+    sed -i "s|PUREJ|$purej|g" temp.sub
     condor_submit temp.sub
     rm -f temp.sub
     let job=$job+1
