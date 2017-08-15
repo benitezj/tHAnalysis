@@ -7,9 +7,12 @@ PUJets=$4
 TC=$5
 HGTD=$6
 HGTDBTAG=$7
-EFFSCHEME=$8
-PUEFF=$9
-NTUPLE=${10}
+BTAGSCHEME=$8
+EFFSCHEME=$9
+PUEFF=${10}
+PUREJ=${11}
+NTUPLE=${12}
+
 
 filename=$(echo $file | awk 'BEGIN {FS="/"} ; {print $NF}')
 echo "Processing: $file ..."
@@ -22,33 +25,38 @@ cd $HOME
 OUTPUTDIR=$HOME/OutputRootFiles
 
 if [[ "$smear" == false ]] ; then 
-  OUTPUTDIR=$OUTPUTDIR/mu0/$sample
+    OUTPUTDIR=$OUTPUTDIR/mu0/$sample
 else
-  dirname="mu200"
-  if [[ "$PUJets" == false ]] ; then
-    dirname+="_noPUJets"
-  fi  
-  if [[ "$TC" == false ]] ; then
-    dirname+="_noTC"
-  else
-    dirname+="_TC"
-    if [[ "$EFFSCHEME" = "PU" ]] ; then
-      dirname+="_PU$PUEFF"
-    elif [[ "$EFFSCHEME" = "HS" ]] ; then
-      dirname+="_HS$PUEFF"
+    dirname="mu200"
+    if [[ "$PUJets" == false ]] ; then
+	dirname+="_noPUJets"
+    fi  
+    if [[ "$TC" == false ]] ; then
+	dirname+="_noTC"
+    else
+	dirname+="_TC"
+	if [[ "$EFFSCHEME" = "PU" ]] ; then
+	    dirname+="_PU$PUEFF"
+	elif [[ "$EFFSCHEME" = "HS" ]] ; then
+	    dirname+="_HS$PUEFF"
+	fi
+    fi 
+    if [[ "$HGTD" == true ]] ; then 
+	dirname+="_HGTD"
+
+	if [[ "$HGTDBTAG" == true ]] ; then
+	    dirname+="_HGTDbtag_$BTAGSCHEME"
+	fi
+
+	if [[ "$PUREJ" == true ]] ; then 
+	    dirname+="_purej"
+	fi
     fi
-  fi 
-  if [[ "$HGTD" == true ]] ; then 
-    dirname+="_HGTD"
-    if [[ "$HGTDBTAG" == true ]] ; then 
-      dirname+="_HGTDbtag"
-    fi
-  fi
-  OUTPUTDIR=$OUTPUTDIR/$dirname/$sample
+    OUTPUTDIR=$OUTPUTDIR/$dirname/$sample
 fi
 
 if [ ! -d $OUTPUTDIR ] ; then
-  mkdir $OUTPUTDIR
+    mkdir $OUTPUTDIR
 fi
 
 # setup envionment
@@ -66,24 +74,36 @@ echo "Running on file: $file"
 # build smearing string
 if [[ "$smear" == true ]] ; then 
   # Create submission command based on options provided
-  smearString="-s mu=200"
-  if [[ "$PUJets" == true ]] ; then
-    smearString+=",addPileupJets"  
-  fi
-  if [[ "$TC" == false ]] ; then
-    smearString+=",noTrackConfirm"
-  fi
-  if [[ "$HGTD" == true ]] ; then
-    smearString+=",useHGTD0"
-    if [[ "$HGTDBTAG" == true ]] ; then 
-      smearString+=",useHGTDbtag"
+    smearString="-s mu=200"
+    if [[ "$PUJets" == true ]] ; then
+	smearString+=",addPileupJets"  
     fi
-  fi
-  if [[ "$EFFSCHEME" == "HS" ]] ; then
-    smearString+=",HSeff=$PUEFF"
-  elif [[ "$EFFSCHEME" == "PU" ]] ; then
-    smearString+=",PUeff=$PUEFF"
-  fi
+    if [[ "$TC" == false ]] ; then
+	smearString+=",noTrackConfirm"
+    fi
+    if [[ "$HGTD" == true ]] ; then
+	smearString+=",useHGTD0"
+	if [[ "$HGTDBTAG" == true ]] ; then 
+	    smearString+=",useHGTDbtag"
+	fi
+
+	if [[ "$BTAGSCHEME" == "lrej" ]] ; then 
+	    smearString+=",btagScheme=lrej"  
+	elif [[ "$BTAGSCHEME" == "crej" ]] ; then 
+	    smearString+=",btagScheme=crej"	    
+	elif [[ "$BTAGSCHEME" == "beff" ]] ; then 
+	    smearString+=",btagScheme=beff"
+	fi
+
+	if [[ "$PUREJ" == true ]] ; then 
+	    smearString+=",useHGTD_PUrejx2"
+	fi
+    fi
+    if [[ "$EFFSCHEME" == "HS" ]] ; then
+	smearString+=",HSeff=$PUEFF"
+    elif [[ "$EFFSCHEME" == "PU" ]] ; then
+	smearString+=",PUeff=$PUEFF"
+    fi
 fi
 
 # buld command string
