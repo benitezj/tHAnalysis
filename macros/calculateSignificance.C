@@ -1,9 +1,57 @@
 #include "TFile.h"
 #include "TH1F.h"
 #include "TString.h"
+#include "TError.h"
 
 #include <vector>
 #include <utility>
+
+
+float getMaxErrorHist(const TH1F *h) {
+
+  const unsigned int nbins = h->GetNbinsX();
+  
+  // First calculate maximum relative error in each bin
+  std::vector<float> errors;
+  for (unsigned int b=1; b < nbins+1; ++b) {
+    if (h->GetBinContent(b) != 0) errors.push_back(h->GetBinError(b)/h->GetBinContent(b));
+  }
+  float maxErr = *std::max_element(errors.begin(), errors.end());
+
+  return maxErr;
+}
+
+
+int getRebinFactor(const TH1F *bg, float rebinThreshold) {
+
+  int rebinFactor = 1;
+  const unsigned int nbins = bg->GetNbinsX();
+  
+  // First calculate maximum relative error in each bin
+  float maxErr = getMaxErrorHist(bg);
+  
+  // Rebin until maxErr falls below threshold
+  while (maxErr > rebinThreshold) {
+  
+    // First make a clone of the histogram
+    TH1F *htemp = (TH1F*)bg->Clone();
+    
+    // Increment rebin factor by 1
+    ++rebinFactor;
+    
+    // Rebin histogram
+    htemp->Rebin(rebinFactor);
+    
+    // Recalculate maximum error
+    maxErr = getMaxErrorHist(htemp);
+  
+    // Delete htemp
+    delete htemp;
+  }
+  
+  //std::cout << "Rebin factor = " << rebinFactor << std::endl;  
+  return rebinFactor;
+}
 
 
 std::pair<float,float> LLR(const TH1F *hSig, const TH1F *hBkg) {
@@ -61,7 +109,7 @@ std::pair<float,float> calculateSignificanceLoop(const TString& setup, const TSt
   h_sg_tWH    = (TH1F*)f_sg_tWH->Get(TString::Format("%s", dist.Data()));
    
   if (!h_bg_ttbar) return {};
-    
+      
   // Here we should normalize the histograms according to xsec and add tH+tWH in a single histogram and all bg in another histogram
   h_bg_ttbar->Scale(scale_ttbar);
   h_bg_ttH_sl->Scale(scale_ttH_sl);
@@ -72,6 +120,14 @@ std::pair<float,float> calculateSignificanceLoop(const TString& setup, const TSt
   h_bg_ttbar->Add(h_bg_ttH_sl);
   h_bg_ttbar->Add(h_bg_ttH_dl);
   h_sg_tH->Add(h_sg_tWH);
+  
+  // Now perform a dynamic rebining
+  // The histograms are rebinned so that the sum of backgrounds has a relative error 
+  // of less than thr%  in each bin
+  float thr = 20;
+  int rebin = getRebinFactor(h_bg_ttbar, thr*0.01);
+  h_bg_ttbar->Rebin(rebin);
+  h_sg_tH->Rebin(rebin);
     
   std::pair<float,float> llr = LLR(h_sg_tH, h_bg_ttbar);
   //printf("Distribution:  %35s   -  LLR = %6.5f +- %6.5f\n", dist.Data(), llr.first, llr.second); 
@@ -81,8 +137,11 @@ std::pair<float,float> calculateSignificanceLoop(const TString& setup, const TSt
 
 void calculateSignificance() {
 
+  // Suppress warnings
+  gErrorIgnoreLevel = kError;
+
   // Different setups used
-  std::vector<TString> setup = {"mu0",
+  /*std::vector<TString> setup = {"mu0",
   				"mu200_noPUJets_TC_PU0.02",
 				"mu200_noTC",
 				"mu200_TC_PU0.02",
@@ -94,7 +153,9 @@ void calculateSignificance() {
 				"mu200_TC_HS0.90_HGTD",
 				"mu200_TC_PU0.02_HGTD_HGTDbtag",
 				"mu200_TC_HS0.90_HGTD_HGTDbtag"
-				};
+				};*/
+  
+  std::vector<TString> setup = {"mu0"};
   
   // Distributions to use for calculating significance
   std::vector<TString> dists = { "jfwd_eta_SRB3",
