@@ -124,7 +124,7 @@ std::pair<float,float> calculateSignificanceLoop(const TString& setup, const TSt
   // Now perform a dynamic rebining
   // The histograms are rebinned so that the sum of backgrounds has a relative error 
   // of less than thr%  in each bin
-  float thr = 20;
+  float thr = 10;
   int rebin = getRebinFactor(h_bg_ttbar, thr*0.01);
   h_bg_ttbar->Rebin(rebin);
   h_sg_tH->Rebin(rebin);
@@ -141,7 +141,7 @@ void calculateSignificance() {
   gErrorIgnoreLevel = kError;
 
   // Different setups used
-  /*std::vector<TString> setup = {"mu0",
+  std::vector<TString> setup = {"mu0",
   				"mu200_noPUJets_TC_PU0.02",
 				"mu200_noTC",
 				"mu200_TC_PU0.02",
@@ -153,10 +153,8 @@ void calculateSignificance() {
 				"mu200_TC_HS0.90_HGTD",
 				"mu200_TC_PU0.02_HGTD_HGTDbtag",
 				"mu200_TC_HS0.90_HGTD_HGTDbtag"
-				};*/
-  
-  std::vector<TString> setup = {"mu0"};
-  
+				};
+    
   // Distributions to use for calculating significance
   std::vector<TString> dists = { "jfwd_eta_SRB3",
   			         "jfwd_eta_SRB4",
