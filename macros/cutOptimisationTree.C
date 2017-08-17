@@ -146,22 +146,22 @@ void cutOptimisationTree() {
   TCut wPreSel = preSel * "eventWeight"; // eventWeight already contains the trigger weight
   
   // Additional cuts to try
-  std::vector<Cut> addCuts = { {"met",        {0,500},    50,    CutType::LOW}, 
-  			       {"pTSum",      {300,1300}, 100,   CutType::LOW},
-			       {"H2_m",       {10,250},   10,    CutType::LOW},
-			       {"H3_m",       {10,250},   10,    CutType::LOW},
-			       {"FoxW1",      {0,1},      0.1, CutType::LOW},  
+  std::vector<Cut> addCuts = { {"FoxW1",      {0,1},      0.1, CutType::LOW},  
 			       {"FoxW2",      {0,1},      0.1, CutType::LOW},  
 			       {"FoxW3",      {0,1},      0.1, CutType::LOW},  
 			       {"shpericity", {0,1},      0.1, CutType::LOW}, 
-			       {"met",        {0,500},    50,    CutType::HIGH}, 
-  			       {"pTSum",      {300,1300}, 100,   CutType::HIGH},
-			       {"H2_m",       {10,250},   10,    CutType::HIGH},
-			       {"H3_m",       {10,250},   10,    CutType::HIGH},
 			       {"FoxW1",      {0,1},      0.1, CutType::HIGH},  
 			       {"FoxW2",      {0,1},      0.1, CutType::HIGH},  
 			       {"FoxW3",      {0,1},      0.1, CutType::HIGH},  
 			       {"shpericity", {0,1},      0.1, CutType::HIGH},
+			       {"H2_m",       {10,250},   10,    CutType::LOW},
+			       {"H3_m",       {10,250},   10,    CutType::LOW},
+			       {"H2_m",       {10,250},   10,    CutType::HIGH},
+			       {"H3_m",       {10,250},   10,    CutType::HIGH},			       
+  			       {"met",        {0,500},    50,    CutType::LOW}, 
+  			       {"pTSum",      {300,1300}, 100,   CutType::LOW},
+			       {"met",        {0,500},    50,    CutType::HIGH}, 
+  			       {"pTSum",      {300,1300}, 100,   CutType::HIGH},
 		             };
 			     
   // Run cut optimisation for each cut			     
@@ -178,8 +178,10 @@ void cutOptimisationTree() {
 
     // Loop over cut values 
     int counter = 0;
-    for (int i=low; i <= high; i += (int)cut.step) {
-          
+    for (int i=1; i < nbins+1; ++i) {
+       
+      float cutValue = low + (i-1)*cut.step;
+                 
       // Histograms from the TTree
       TH1F *h_bg_ttbar  = new TH1F("h_bg_ttbar", "", 40, 0, 4);
       TH1F *h_bg_ttH_sl = new TH1F("h_bg_ttH_sl", "", 40, 0, 4);
@@ -189,8 +191,8 @@ void cutOptimisationTree() {
     
       // Update cut value
       TCut c;
-      if (cut.cutType == CutType::LOW) c = TString::Format("%s < %d", cut.name.Data(), i);
-      else c = TString::Format("%s >= %d", cut.name.Data(), i);
+      if (cut.cutType == CutType::LOW) c = TString::Format("%s < %f", cut.name.Data(), cutValue);
+      else c = TString::Format("%s >= %f", cut.name.Data(), cutValue);
       
       if (debug) std::cout << "Apply cuts...\n";
         
@@ -256,7 +258,7 @@ void cutOptimisationTree() {
             
       // Plot
       if (debug) std::cout << "Plot ...\n";
-      //plotSigPlot(h_bg_ttbar, h_sg_tH, cut, i);
+      //plotSigPlot(h_bg_ttbar, h_sg_tH, cut, cutValue);
       
       
       // Calculate significance
