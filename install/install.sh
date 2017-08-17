@@ -4,6 +4,7 @@ svn co svn+ssh://svn.cern.ch/reps/atlasoff/PhysicsAnalysis/UpgradePhys/SmearingF
 
 git clone ssh://git@gitlab.cern.ch:7999/benitezj/SimpleAnalysis.git
 
+cp tHAnalysis/install/PileupOverlay.cxx UpgradePerformanceFunctions/Root/PileupOverlay.cxx
+cp tHAnalysis/install/FlavourTaggingPerformanceFunctions.cxx UpgradePerformanceFunctions/Root/FlavourTaggingPerformanceFunctions.cxx
+cp tHAnalysis/install/UpgradePerformanceFunctions.h UpgradePerformanceFunctions/UpgradePerformanceFunctions/UpgradePerformanceFunctions.h  
 rcSetup Base,2.4.32
-rc find_packages
-rc compile
