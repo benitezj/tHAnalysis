@@ -58,6 +58,54 @@ Setup * GetSetup(std::vector<Setup*> mySetups, TString search){
   return mySetup; 
 }
 
+
+float getMaxErrorHist(const TH1F *h) {
+
+  const unsigned int nbins = h->GetNbinsX();
+  
+  // First calculate maximum relative error in each bin
+  std::vector<float> errors;
+  for (unsigned int b=1; b < nbins+1; ++b) {
+    if (h->GetBinContent(b) != 0) errors.push_back(h->GetBinError(b)/h->GetBinContent(b));
+  }
+  float maxErr = *std::max_element(errors.begin(), errors.end());
+
+  return maxErr;
+}
+
+
+int getRebinFactor(const TH1F *bg, float rebinThreshold) {
+
+  int rebinFactor = 1;
+  const unsigned int nbins = bg->GetNbinsX();
+  
+  // First calculate maximum relative error in each bin
+  float maxErr = getMaxErrorHist(bg);
+  
+  // Rebin until maxErr falls below threshold
+  while (maxErr > rebinThreshold) {
+  
+    // First make a clone of the histogram
+    TH1F *htemp = (TH1F*)bg->Clone();
+    
+    // Increment rebin factor by 1
+    ++rebinFactor;
+    
+    // Rebin histogram
+    htemp->Rebin(rebinFactor);
+    
+    // Recalculate maximum error
+    maxErr = getMaxErrorHist(htemp);
+  
+    // Delete htemp
+    delete htemp;
+  }
+  
+  //std::cout << "Rebin factor = " << rebinFactor << std::endl;  
+  return rebinFactor;
+}
+
+
 std::pair<float,float> LLR(const TH1F *hSig, const TH1F *hBkg, std::vector<std::vector<float>>& LLR_perBin) {
 
   std::pair<float,float> LLR={0.,0.};
@@ -86,7 +134,7 @@ std::pair<float,float> LLR(const TH1F *hSig, const TH1F *hBkg, std::vector<std::
   return LLR;
 }
 
-std::pair<float,float> calculateSignificanceLoop(const TString& setup, const TString& dist, bool SM, std::vector<std::vector<float>>& LLR_perBin, bool rebin) {
+std::pair<float,float> calculateSignificanceLoop(const TString& setup, const TString& dist, bool SM, std::vector<std::vector<float>>& LLR_perBin) {
   
   // Directory where input root files are stored
   TString dir = "OutputRootFiles";
@@ -130,19 +178,20 @@ std::pair<float,float> calculateSignificanceLoop(const TString& setup, const TSt
   h_bg_ttH_dl->Scale(scale_ttH_dl);
   h_sg_tH->Scale(scale_tH);
   h_sg_tWH->Scale(scale_tWH);
-  
-  if(rebin){
-    h_bg_ttbar->Rebin(2); 
-    h_bg_ttH_sl->Rebin(2);
-    h_bg_ttH_dl->Rebin(2);
-    h_sg_tH->Rebin(2);
-    h_sg_tWH->Rebin(2);    
-  }
     
   h_bg_ttbar->Add(h_bg_ttH_sl);
   h_bg_ttbar->Add(h_bg_ttH_dl);
   h_sg_tH->Add(h_sg_tWH);
-    
+  
+
+  // Now perform a dynamic rebining
+  // The histograms are rebinned so that the sum of backgrounds has a relative error 
+  // of less than thr%  in each bin
+  float thr = 10;
+  int rebin = getRebinFactor(h_bg_ttbar, thr*0.01);
+  h_bg_ttbar->Rebin(rebin);
+  h_sg_tH->Rebin(rebin);
+  
   std::pair<float,float> llr = LLR(h_sg_tH, h_bg_ttbar, LLR_perBin);
   //printf("Distribution:  %35s   -  LLR = %6.5f +- %6.5f\n", dist.Data(), llr.first, llr.second); 
     
@@ -151,14 +200,16 @@ std::pair<float,float> calculateSignificanceLoop(const TString& setup, const TSt
 
 void calculateSignificance_liz() {
 
+  // Suppress warnings
+  gErrorIgnoreLevel = kError;
+
   // Different setups used
   std::vector<TString> setupDirs = {//"mu0",                                     
 				       	          //"btagWP70/mu200_noPUJets_TC_PU0.02",		        
-					          //"btagWP70/mu200_noTC",			      	   
-						  //"btagWP70/mu200_TC_PU0.02",			        
+					          //"btagWP70/mu200_noTC",			        
 						    "btagWP70/mu200_TC_PU0.02",		      
 						    "btagWP70/mu200_TC_PU0.05",		      
-						    //"btagWP70/mu200_TC_PU0.10",		      
+						    "btagWP70/mu200_TC_PU0.10",		      
 						    "btagWP70/mu200_TC_HS0.70",		      
 						    "btagWP70/mu200_TC_HS0.80",		      
 						    "btagWP70/mu200_TC_HS0.90",
@@ -180,10 +231,10 @@ void calculateSignificance_liz() {
 						    "btagWP85/mu200_TC_PU0.05_HGTD_HGTDbtag_lrej_purej",
 						    "btagWP85/mu200_TC_PU0.05_HGTD_HGTDbtag_crej_purej",
 						    "btagWP85/mu200_TC_PU0.05_HGTD_HGTDbtag_beff_purej",
-						    "btagWP85/mu200_TC_PU0.05_HGTD_purej"};
-						    // "mu200_TC_PU0.05_HGTD_HGTDbtag_lrej_purej_eleEta",
-						    // "mu200_TC_PU0.05_HGTD_HGTDbtag_crej_purej_eleEta",
-						    // "mu200_TC_PU0.05_HGTD_HGTDbtag_beff_purej_eleEta"};
+						    "btagWP85/mu200_TC_PU0.05_HGTD_purej",
+						    "btagWP70/mu200_TC_PU0.05_HGTD_HGTDbtag_lrej_purej_fwdEle",
+						    "btagWP70/mu200_TC_PU0.05_HGTD_HGTDbtag_crej_purej_fwdEle",
+						    "btagWP70/mu200_TC_PU0.05_HGTD_HGTDbtag_beff_purej_fwdEle"};
   
   // Make a vector with all the setups
   const int n = setupDirs.size();
@@ -204,10 +255,8 @@ void calculateSignificance_liz() {
 				 //"jfwd_eta_SRMbbH3_SRB3",
 				 //"jfwd_eta_SRMbbH3_SRB4"};
 
-  // Option to rebin histograms (2 bins -> 1) 
-  bool rebin=false; 
-  TString binScheme="";
-  if(rebin) binScheme="_rebinned";
+  // Option to rebin histograms
+  TString binScheme="_rebinned";
 
   // Set k_t to 1 or -1
   std::vector<bool> SM = {true, false};
@@ -229,7 +278,7 @@ void calculateSignificance_liz() {
       for(auto d : dists) {
 
 	std::vector<std::vector<float>> llrPerBin; 
-	sig = calculateSignificanceLoop(s, d, sm, llrPerBin, rebin);
+	sig = calculateSignificanceLoop(s, d, sm, llrPerBin);
 	
 	if(d.Contains("SRB3")){
 	  sigB3 = sig; 
@@ -248,7 +297,7 @@ void calculateSignificance_liz() {
       //if(sm) printf("SM \n");
       //else printf("k_t = -1 \n"); 
 
-      printf("Distribution:  %35s   -  LLR = %6.5f +- %6.5f\n", "Sum", sum, sumE); 
+      printf("Distribution:  %35s   -  LLR = %6.7f +- %6.7f\n", "Sum", sum, sumE); 
       
       mySetups.at(i)->SetLLR({sum,sumE});
       mySetups.at(i)->SetLLR_SRB3(sigB3); 
@@ -287,8 +336,8 @@ void calculateSignificance_liz() {
     pd2=fabs(pd2)*100; 
 
     //Errors on percent difference
-    float pd1err = sqrt(std::pow(1/x0.first * x1.second, 2) + std::pow(x1.first * x0.second/(x0.first*x0.first), 2));
-    float pd2err = sqrt(std::pow(1/x0.first * x2.second, 2) + std::pow(x2.first * x0.second/(x0.first*x0.first), 2));
+    float pd1err = 100*sqrt(std::pow(1/x0.first * x1.second, 2) + std::pow(x1.first * x0.second/(x0.first*x0.first), 2));
+    float pd2err = 100*sqrt(std::pow(1/x0.first * x2.second, 2) + std::pow(x2.first * x0.second/(x0.first*x0.first), 2));
 
     TString HSorPU;
     if(eff.Contains("0.02") || eff.Contains("0.05") || eff.Contains("0.10")) HSorPU = "PU";
@@ -304,7 +353,7 @@ void calculateSignificance_liz() {
 
   output<<"\n \n \n"<<std::endl; 
 
-  //Compare btagging schemes
+  //-------------Compare btagging schemes (70% WP)
   output<<"btagging improvements for mu200, TC, PU eff 0.05, HGTD w/ PU eff $\\times 0.5$"<<std::endl; 
   output<<"\\[\\begin{array}{|c|c|c|c|} \n \\hline"<<std::endl; 
   output<<"\\text{No btagging improvement} & \\text{l-jet rej } \\times 2.8 & \\text{c-jet rej } \\times 1.1 & \\text{b-jet eff } \\times 1.1 \\\\  \\hline"<<std::endl; 
@@ -332,9 +381,9 @@ void calculateSignificance_liz() {
   pd3=fabs(pd3)*100;
 
   //Errors on percent difference
-  float pd1err = sqrt(std::pow(1/x0.first * x1.second, 2) + std::pow(x1.first * x0.second/(x0.first*x0.first), 2));
-  float pd2err = sqrt(std::pow(1/x0.first * x2.second, 2) + std::pow(x2.first * x0.second/(x0.first*x0.first), 2));
-  float pd3err = sqrt(std::pow(1/x0.first * x3.second, 2) + std::pow(x3.first * x0.second/(x0.first*x0.first), 2));
+  float pd1err = 100*sqrt(std::pow(1/x0.first * x1.second, 2) + std::pow(x1.first * x0.second/(x0.first*x0.first), 2));
+  float pd2err = 100*sqrt(std::pow(1/x0.first * x2.second, 2) + std::pow(x2.first * x0.second/(x0.first*x0.first), 2));
+  float pd3err = 100*sqrt(std::pow(1/x0.first * x3.second, 2) + std::pow(x3.first * x0.second/(x0.first*x0.first), 2));
 
   output<<x0.first<<" \\pm "<<x0.second<<" & ";
   output<<x1.first<<" \\pm "<<x1.second<<" ("<<sign1<<pd1<<"\\pm "<<pd1err<<"\\%) & ";
@@ -346,7 +395,7 @@ void calculateSignificance_liz() {
   output<<"\n \n \n"<<std::endl; 
 
   
-  //Compare btagging schemes (85% WP)
+  //-----------------Compare btagging schemes (85% WP)
   output<<"btagWP85"<<std::endl;
   output<<"btagging improvements for mu200, TC, PU eff 0.05, HGTD w/ PU eff $\\times 0.5$"<<std::endl; 
   output<<"\\[\\begin{array}{|c|c|c|c|} \n \\hline"<<std::endl; 
@@ -375,9 +424,9 @@ void calculateSignificance_liz() {
   pd3=fabs(pd3)*100;
 
   //Errors on percent difference
-  pd1err = sqrt(std::pow(1/x0.first * x1.second, 2) + std::pow(x1.first * x0.second/(x0.first*x0.first), 2));
-  pd2err = sqrt(std::pow(1/x0.first * x2.second, 2) + std::pow(x2.first * x0.second/(x0.first*x0.first), 2));
-  pd3err = sqrt(std::pow(1/x0.first * x3.second, 2) + std::pow(x3.first * x0.second/(x0.first*x0.first), 2));
+  pd1err = 100*sqrt(std::pow(1/x0.first * x1.second, 2) + std::pow(x1.first * x0.second/(x0.first*x0.first), 2));
+  pd2err = 100*sqrt(std::pow(1/x0.first * x2.second, 2) + std::pow(x2.first * x0.second/(x0.first*x0.first), 2));
+  pd3err = 100*sqrt(std::pow(1/x0.first * x3.second, 2) + std::pow(x3.first * x0.second/(x0.first*x0.first), 2));
 
   output<<x0.first<<" \\pm "<<x0.second<<" & ";
   output<<x1.first<<" \\pm "<<x1.second<<" ("<<sign1<<pd1<<"\\pm "<<pd1err<<"\\%) & ";
@@ -386,43 +435,45 @@ void calculateSignificance_liz() {
   
   output<<"\\end{array} \\]"<<std::endl;   
 
+  output<<"\n\n\n"<<std::endl; 
 
-  // //Compare btagging schemes with increased electron eta acceptance
-  // output<<"btagging improvements for mu200, TC, PU eff 0.05, HGTD w/ PU eff $\\times 0.5$"<<std::endl; 
-  // output<<"\\[\\begin{array}{|c|c|c|} \n \\hline"<<std::endl; 
-  // output<<" & \\vert \\eta (electron) \\vert < 2.47 & \\vert \\eta (electron) \\vert < 4.0 \\\\  \\hline"<<std::endl; 
+
+  //------------Compare addition of fwd electrons (70% WP)
+  output<<"btagWP70"<<std::endl;
+  output<<"btagging improvements for mu200, TC, PU eff 0.05, HGTD w/ PU eff $\\times 0.5$"<<std::endl; 
+  output<<"\\[\\begin{array}{|c|c|c|} \n \\hline"<<std::endl; 
+  output<<" & \\vert \\eta (electron) \\vert < 2.47 & \\vert \\eta (electron) \\vert < 4.0 \\\\  \\hline"<<std::endl; 
  
+  setup1b = GetSetup(mySetups, "btagWP70/mu200_TC_PU0.05_HGTD_HGTDbtag_lrej_purej_fwdEle");
+  setup2b = GetSetup(mySetups, "btagWP70/mu200_TC_PU0.05_HGTD_HGTDbtag_crej_purej_fwdEle");
+  setup3b = GetSetup(mySetups, "btagWP70/mu200_TC_PU0.05_HGTD_HGTDbtag_beff_purej_fwdEle"); 
+
+  x1b = setup1b->GetLLR();
+  x2b = setup2b->GetLLR();
+  x3b = setup3b->GetLLR();
+
+  //Percent difference
+  pd1 = (x1b.first-x1.first)/x1.first;
+  pd2 = (x2b.first-x2.first)/x2.first;
+  pd3 = (x3b.first-x3.first)/x3.first;
+ 
+  if(pd1>=0) sign1="+"; else sign1="-";
+  if(pd2>=0) sign2="+"; else sign2="-";
+  if(pd3>=0) sign3="+"; else sign3="-";
+  pd1=fabs(pd1)*100; 
+  pd2=fabs(pd2)*100;
+  pd3=fabs(pd3)*100;
+
+  //Errors on percent difference
+  pd1err = 100*sqrt(std::pow(1/x1.first * x1b.second, 2) + std::pow(x1b.first * x1.second/(x1.first*x1.first), 2));
+  pd2err = 100*sqrt(std::pow(1/x2.first * x2b.second, 2) + std::pow(x2b.first * x2.second/(x2.first*x2.first), 2));
+  pd3err = 100*sqrt(std::pow(1/x3.first * x3b.second, 2) + std::pow(x3b.first * x3.second/(x3.first*x3.first), 2));
+
+  output<<"\\text{l-jet rej }\\times 2.8 & "<<x1.first<<" \\pm "<<x1.second<<" & "<<x1b.first<<" \\pm "<<x1b.second<<" ("<<sign1<<pd1<<"\\pm"<<pd1err<<" \\%) \\\\ \\hline "<<std::endl; 
+  output<<"\\text{c-jet rej }\\times 1.1 & "<<x2.first<<" \\pm "<<x2.second<<" & "<<x2b.first<<" \\pm "<<x2b.second<<" ("<<sign2<<pd2<<"\\pm"<<pd2err<<" \\%) \\\\ \\hline "<<std::endl; 
+  output<<"\\text{b-jet eff }\\times 1.1 & "<<x3.first<<" \\pm "<<x3.second<<" & "<<x3b.first<<" \\pm "<<x3b.second<<" ("<<sign3<<pd3<<"\\pm"<<pd3err<<" \\%) \\\\ \\hline "<<std::endl; 
   
-  // Setup * setup1b = GetSetup(mySetups, "mu200_TC_PU0.05_HGTD_HGTDbtag_lrej_purej_eleEta");
-  // Setup * setup2b = GetSetup(mySetups, "mu200_TC_PU0.05_HGTD_HGTDbtag_crej_purej_eleEta");
-  // Setup * setup3b = GetSetup(mySetups, "mu200_TC_PU0.05_HGTD_HGTDbtag_beff_purej_eleEta"); 
-
-  // char out1b[100], out1be[100], out2b[100], out2be[100], out3b[100], out3be[100];
-  // sprintf(out1b,"%6.5f",setup1b->GetLLR().first);
-  // sprintf(out1be,"%6.5f",setup1b->GetLLR().second);
-  // sprintf(out2b,"%6.5f",setup2b->GetLLR().first);
-  // sprintf(out2be,"%6.5f",setup2b->GetLLR().second);
-  // sprintf(out3b,"%6.5f",setup3b->GetLLR().first);
-  // sprintf(out3be,"%6.5f",setup3b->GetLLR().second);
-
-  // pd1 = (setup1b->GetLLR().first-setup1->GetLLR().first)/setup1->GetLLR().first;
-  // pd2 = (setup2b->GetLLR().first-setup2->GetLLR().first)/setup2->GetLLR().first;
-  // pd3 = (setup3b->GetLLR().first-setup3->GetLLR().first)/setup3->GetLLR().first;
-  
-  // if(pd1>=0) sign1="+"; else sign1="-";
-  // if(pd2>=0) sign2="+"; else sign2="-";
-  // if(pd3>=0) sign3="+"; else sign3="-";
-  // pd1=fabs(pd1)*100; 
-  // pd2=fabs(pd2)*100;
-  // pd3=fabs(pd3)*100;
-
-  // std::cout<<"out 1 = "<<out1<<", out1b = "<<out1b<<std::endl; 
-
-  // output<<"& \\text{l-jet rej }\\times 2.8 & "<<out1<<" \\pm "<<out1e<<" & "<<out1b<<" \\pm "<<out1be<<" ("<<sign1<<pd1<<" \\%) \\\\ \\hline "<<std::endl; 
-  // output<<"& \\text{c-jet rej }\\times 1.1 & "<<out2<<" \\pm "<<out2e<<" & "<<out2b<<" \\pm "<<out2be<<" ("<<sign2<<pd2<<" \\%) \\\\ \\hline "<<std::endl; 
-  // output<<"& \\text{b-jet eff }\\times 1.1 & "<<out3<<" \\pm "<<out3e<<" & "<<out3b<<" \\pm "<<out3be<<" ("<<sign3<<pd3<<" \\%) \\\\ \\hline "<<std::endl; 
-  
-  // output<<"\\end{array} \\]"<<std::endl;   
+  output<<"\\end{array} \\]"<<std::endl;   
 
 
   for(unsigned int i=0; i < setupDirs.size(); ++i) delete setup[i];
