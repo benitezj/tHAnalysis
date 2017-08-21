@@ -10,8 +10,9 @@ HGTDBTAG=$7
 BTAGSCHEME=$8
 EFFSCHEME=$9
 PUEFF=${10}
-PUREJ=${11}
-NTUPLE=${12}
+BTAGOP=${11}
+PUREJ=${12}
+NTUPLE=${13}
 
 
 filename=$(echo $file | awk 'BEGIN {FS="/"} ; {print $NF}')
@@ -52,6 +53,9 @@ else
 	    dirname+="_purej"
 	fi
     fi
+    if [[ "$BTAGOP" == "85" ]] ; then
+      dirname+="_btagOP85"
+    fi  
     OUTPUTDIR=$OUTPUTDIR/$dirname/$sample
 fi
 
@@ -104,6 +108,9 @@ if [[ "$smear" == true ]] ; then
     elif [[ "$EFFSCHEME" == "PU" ]] ; then
 	smearString+=",PUeff=$PUEFF"
     fi
+    if [[ "$BTAGOP" == "85" ]] ; then
+	smearString+=",btagOP=85"
+    fi	
 fi
 
 # buld command string

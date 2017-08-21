@@ -31,25 +31,25 @@ fi
 ####
 
 # mu=200 no track confirmation
-$command -s -noTC
-
-# mu=200 track confirmation const PU efficiency 2% 
-$command -s -PU 0.02
-
-# mu=200 track confirmation const PU efficiency 5% 
-$command -s -PU 0.05
-
-# mu=200 track confirmation const PU efficiency 10% 
-$command -s -PU 0.10
-
-# mu=200 track confirmation const HS efficiency 70% 
-$command -s -HS 0.70
-
-# mu=200 track confirmation const HS efficiency 80% 
-$command -s -HS 0.80
-
-# mu=200 track confirmation const HS efficiency 90% 
-$command -s -HS 0.90
+#$command -s -noTC
+#
+## mu=200 track confirmation const PU efficiency 2% 
+#$command -s -PU 0.02
+#
+## mu=200 track confirmation const PU efficiency 5% 
+#$command -s -PU 0.05
+#
+## mu=200 track confirmation const PU efficiency 10% 
+#$command -s -PU 0.10
+#
+## mu=200 track confirmation const HS efficiency 70% 
+#$command -s -HS 0.70
+#
+## mu=200 track confirmation const HS efficiency 80% 
+#$command -s -HS 0.80
+#
+## mu=200 track confirmation const HS efficiency 90% 
+#$command -s -HS 0.90
 
 ####
 # Add HGTD, -purej = pileup rejection * 2
@@ -61,7 +61,7 @@ $command -s -HS 0.90
 
 # mu=200 track confirmation const PU efficiency 5% + HGTD
 #$command -s -HGTD -PU 0.05
-#$command -s -HGTD -purej -PU 0.05
+$command -s -HGTD -purej -PU 0.05
 
 # mu=200 track confirmation const PU efficiency 10% + HGTD
 #$command -s -HGTD -PU 0.10
@@ -79,6 +79,13 @@ $command -s -HS 0.90
 #$command -s -HGTD -HS 0.90
 #$command -s -HGTD -purej -HS 0.90
 
+####
+# Add HGTD, -purej = pileup rejection * 2 with 85% WP
+####
+
+# mu=200 track confirmation const PU efficiency 5% + HGTD
+#$command -s -HGTD -PU 0.05
+#$command -s -HGTD -purej -PU 0.05 -btagOP 85
 
 ####
 # All options below are for testing the improvement in l-jet/c-jet rejection or b-efficiency with the HGTD

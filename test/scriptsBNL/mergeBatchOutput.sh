@@ -66,6 +66,7 @@ purej=false
 addPUJets=true
 effScheme="PU"
 puEff=0.02
+btagOP=70
 
 # Get the options
 while [[ $# > 0 ]] ; do
@@ -100,6 +101,9 @@ while [[ $# > 0 ]] ; do
     -PU)
     effScheme="PU"
     puEff=$2
+    shift ;;
+    -btagOP)
+    btagOP=$2
     shift ;;
     *)
     echo "Unknown option: $arg" 
@@ -139,7 +143,9 @@ else
       dirname+="_purej"
     fi
   fi
-  
+  if [[ "$btagOP" == "85" ]] ; then
+    dirname+="_btagOP85"
+  fi  
   base_dir=/usatlas/u/$USER/tHFramework/OutputRootFiles/$dirname
 fi
 

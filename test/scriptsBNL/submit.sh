@@ -2,7 +2,7 @@
 
 # Sample declaration
 samples=(ttbar tWH tH ttH_dilep ttH_semilep)
-#samples=(tH)
+#samples=(ttH_semilep)
 
 # Default options
 smearing=false
@@ -10,11 +10,12 @@ addPUJets=true
 trackConfirm=true
 HGTD=false
 HGTDBTAG=false
-btagscheme=""
+btagscheme="lrej"
 purej=false
 ntup=""
 effScheme="PU"
 puEff=0.02
+btagOP=70
 
 while [[ $# > 0 ]] ; do
   arg="$1"
@@ -43,6 +44,9 @@ while [[ $# > 0 ]] ; do
     effScheme="PU"
     puEff=$2
     shift ;;
+    -btagOP)
+    btagOP=$2
+    shift ;;
     *)
     echo "Unknown option: $arg" 
     exit 1 ;;
@@ -61,6 +65,11 @@ if [[ "$smearing" == true ]] ; then
     echo "Unsupported HS scheme: $puEff"
     echo "Supported values: 0.70, 0.80, 0.90"
     exit 3
+  fi
+  if [[ "$btagOP" != "70" && "$btagOP" != "85" ]] ; then
+    echo "Unsupported b-tag OP: $btagOP"
+    echo "Supported values: 70 85"
+    exit 4
   fi
 fi
 
@@ -120,6 +129,9 @@ for sample in "${samples[@]}" ; do
 	elif [[ "$effScheme" == "PU" ]] ; then
 	    smearString+=" -PU $puEff"  
 	fi
+	if [[ "$btagOP" == "85" ]] ; then
+	    smearString+=" -btagOP 85"
+	fi    
 	files=($(./mergeBatchOutput.sh -cM $sample $smearString))
     fi
     
@@ -142,6 +154,7 @@ for sample in "${samples[@]}" ; do
     sed -i "s|EFFSCHEME|$effScheme|g" temp.sub
     sed -i "s|PUEFF|$puEff|g" temp.sub
     sed -i "s|PUREJ|$purej|g" temp.sub
+    sed -i "s|BTAGOP|$btagOP|g" temp.sub
     condor_submit temp.sub
     rm -f temp.sub
     let job=$job+1
