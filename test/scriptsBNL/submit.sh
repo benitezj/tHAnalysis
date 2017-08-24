@@ -2,7 +2,7 @@
 
 # Sample declaration
 samples=(ttbar tWH tH ttH_dilep ttH_semilep)
-#samples=(ttH_semilep)
+#samples=(tH)
 
 # Default options
 smearing=false
@@ -11,7 +11,7 @@ trackConfirm=true
 HGTD=false
 HGTDBTAG=false
 btagscheme="lrej"
-purej=false
+purej=true
 ntup=""
 effScheme="PU"
 puEff=0.02
