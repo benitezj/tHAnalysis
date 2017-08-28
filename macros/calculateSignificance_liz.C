@@ -148,7 +148,7 @@ std::pair<float,float> LLR(const TH1F *hSig, const TH1F *hBkg, std::vector<std::
 std::pair<float,float> calculateSignificanceLoop(const TString& setup, const TString& dist, float kt, std::vector<std::vector<float>>& LLR_perBin) {
   
   // Directory where input root files are stored
-  TString dir = "OutputRootFiles";
+  TString dir = "../OutputRootFiles/August7";
 
   // samples
   TFile *f_bg_ttbar  = TFile::Open(TString::Format("%s/%s/ttbar/ttbar.root", dir.Data(), setup.Data()), "read");
@@ -166,16 +166,16 @@ std::pair<float,float> calculateSignificanceLoop(const TString& setup, const TSt
   
   // Change xsec depending on value of k_t
 
-  float k1 = ftH(kt);
-  float k2 = ftWH(kt);
-  //std::cout<<"k1 = "<<k1<<std::endl;
-  //std::cout<<"k2 = "<<k2<<std::endl;
+  float k1 = 1;// ftH(kt);
+  float k2 = 1; //ftWH(kt);
+  //std::cout<<"\n k1 = "<<k1<<std::endl;
+  //std::cout<<"\n k2 = "<<k2<<std::endl;
 
   float scale_ttbar  = 3000000.*452.2944528/h_bg_ttbar->GetBinContent(2);
   float scale_ttH_sl = 3000000.*0.22276/h_bg_ttH_sl->GetBinContent(2);
   float scale_ttH_dl = 3000000.*0.05343/h_bg_ttH_dl->GetBinContent(2);
-  float scale_tH     = 3000000.*k1/h_sg_tH->GetBinContent(2);  //k1*3000000.*0.054157/h_sg_tH->GetBinContent(2);
-  float scale_tWH    = 3000000.*k2/h_sg_tWH->GetBinContent(2); //k2*3000000.*0.014425/h_sg_tWH->GetBinContent(2);
+  float scale_tH     = /*3000000.*k1/h_sg_tH->GetBinContent(2);*/ /*k1*3000000.*0.054157/h_sg_tH->GetBinContent(2);*/ k1*3000000.*0.04284/h_sg_tH->GetBinContent(2);
+  float scale_tWH    = /*3000000.*k2/h_sg_tWH->GetBinContent(2);*/ /*k2*3000000.*0.014425/h_sg_tWH->GetBinContent(2);*/ k2*3000000.*0.014425/h_sg_tWH->GetBinContent(2);
 
   // Get Histograms 
   h_bg_ttbar  = (TH1F*)f_bg_ttbar->Get(TString::Format("%s", dist.Data()));
@@ -219,26 +219,26 @@ void calculateSignificance_liz() {
 
   // Different setups used
   std::vector<TString> setupDirs = {//"mu0",                                     
-				       	            "mu200_noPUJets_TC_PU0.02",		        
-					            "mu200_noTC",			        
+				       	            //"mu200_noPUJets_TC_PU0.02",		        
+					            //"mu200_noTC",			        
 						    "mu200_TC_PU0.02",		      
 						    "mu200_TC_PU0.05",		      
 						    "mu200_TC_PU0.10",		      
-						    // "mu200_TC_HS0.70",		      
-						    // "mu200_TC_HS0.80",		      
-						    // "mu200_TC_HS0.90",
-						    // "mu200_TC_PU0.02_HGTD",		      
-						    // "mu200_TC_PU0.05_HGTD",		      
-						    // "mu200_TC_PU0.10_HGTD",		      
-						    // "mu200_TC_HS0.70_HGTD",		      
-						    // "mu200_TC_HS0.80_HGTD",		      
-						    // "mu200_TC_HS0.90_HGTD",		      
-						    "mu200_TC_PU0.02_HGTD_purej",	      
-						    "mu200_TC_PU0.05_HGTD_purej",	      
-						    "mu200_TC_PU0.10_HGTD_purej"};	      
-						    // "mu200_TC_HS0.70_HGTD_purej",	      
-						    // "mu200_TC_HS0.80_HGTD_purej",	      
-						    // "mu200_TC_HS0.90_HGTD_purej",
+						    "mu200_TC_HS0.70",		      
+						    "mu200_TC_HS0.80",		      
+						    "mu200_TC_HS0.90",
+						    "mu200_TC_PU0.02_HGTD",		      
+						    "mu200_TC_PU0.05_HGTD",		      
+						    "mu200_TC_PU0.10_HGTD",		      
+						    "mu200_TC_HS0.70_HGTD",		      
+						    "mu200_TC_HS0.80_HGTD",		      
+						    "mu200_TC_HS0.90_HGTD",	      
+						    "mu200_TC_PU0.02_HGTD_HGTDpuRejx2",	      
+						    "mu200_TC_PU0.05_HGTD_HGTDpuRejx2",	      
+						    "mu200_TC_PU0.10_HGTD_HGTDpuRejx2",	      
+						    "mu200_TC_HS0.70_HGTD_HGTDpuRejx2",	      
+						    "mu200_TC_HS0.80_HGTD_HGTDpuRejx2",	      
+						    "mu200_TC_HS0.90_HGTD_HGTDpuRejx2"};
 						    // "mu200_TC_PU0.05_HGTD_HGTDbtag_lrej_purej",
 						    // "mu200_TC_PU0.05_HGTD_HGTDbtag_crej_purej",
 						    // "mu200_TC_PU0.05_HGTD_HGTDbtag_beff_purej",
@@ -272,15 +272,11 @@ void calculateSignificance_liz() {
   // Option to rebin histograms
   TString binScheme="_rebinned";
 
-  // Set k_t to 1 or -1
-  std::vector<bool> SM = {true, false};
-  bool sm = false;  
-
   // Create text file with table of significances
   //std::ofstream output("macros/significanceTables_"+binScheme+kappaT+".txt");
     
   // Calculate LLRs
-  for (float kt=-1.;kt<3;kt+=0.5){
+  for (float kt=1.;kt<1.5;kt+=0.5){
     printf("k_t = %.1f\n", kt);
     for (unsigned int i=0; i < setupDirs.size(); ++i ) {
       auto s = setupDirs.at(i);
