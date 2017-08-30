@@ -112,11 +112,11 @@ void plotCutEfficiency() {
   TString dir = "/usatlas/u/sargyrop/tHFramework/OutputRootFiles";
   
   // samples
-  TFile *f_bg_ttbar  = TFile::Open("/usatlas/u/sargyrop/tHFramework/OutputRootFiles/mu200_TC/ttbar/ttbar.root", "read");
-  TFile *f_bg_ttH_sl = TFile::Open("/usatlas/u/sargyrop/tHFramework/OutputRootFiles/mu200_TC/ttH_semilep/ttH_semilep.root", "read");
-  TFile *f_bg_ttH_dl = TFile::Open("/usatlas/u/sargyrop/tHFramework/OutputRootFiles/mu200_TC/ttH_dilep/ttH_dilep.root", "read");
-  TFile *f_sg_tH     = TFile::Open("/usatlas/u/sargyrop/tHFramework/OutputRootFiles/mu200_TC/tH/tH.root", "read");
-  TFile *f_sg_tWH    = TFile::Open("/usatlas/u/sargyrop/tHFramework/OutputRootFiles/mu200_TC/tWH/tWH.root", "read");
+  TFile *f_bg_ttbar  = TFile::Open("/usatlas/u/sargyrop/tHFramework/OutputRootFiles/mu0/ttbar/ttbar.root", "read");
+  TFile *f_bg_ttH_sl = TFile::Open("/usatlas/u/sargyrop/tHFramework/OutputRootFiles/mu0/ttH_semilep/ttH_semilep.root", "read");
+  TFile *f_bg_ttH_dl = TFile::Open("/usatlas/u/sargyrop/tHFramework/OutputRootFiles/mu0/ttH_dilep/ttH_dilep.root", "read");
+  TFile *f_sg_tH     = TFile::Open("/usatlas/u/sargyrop/tHFramework/OutputRootFiles/mu0/tH/tH.root", "read");
+  TFile *f_sg_tWH    = TFile::Open("/usatlas/u/sargyrop/tHFramework/OutputRootFiles/mu0/tWH/tWH.root", "read");
   
   
   // Normalization
@@ -146,7 +146,11 @@ void plotCutEfficiency() {
 						     {"HT_SRB3", CutType::LOW},
 						     {"HT_SRB3", CutType::HIGH}, 
 						     {"MET_SRB3", CutType::LOW},
-						     {"MET_SRB3", CutType::HIGH} };
+						     {"MET_SRB3", CutType::HIGH},
+						     {"FoxW2_SRB3", CutType::LOW},
+						     {"FoxW2_SRB3", CutType::HIGH},
+						     {"FoxW3_SRB3", CutType::LOW},
+						     {"FoxW3_SRB3", CutType::HIGH}, };
   
   // Loop over distributions and make efficiency plots
   for (auto dist : dists) {
