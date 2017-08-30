@@ -1,6 +1,8 @@
 #export INPUT=/data/tHAnalysis/August7/mu0
-export INPUT=/data/tHAnalysis/August7/mu200_TC_HS0.70
+#export INPUT=/data/tHAnalysis/August7/mu200_TC_HS0.70
 #export INPUT=/data/tHAnalysis/August7/mu200_TC_HS0.70_HGTD
+export INPUT=/data/tHAnalysis/August7/mu200_TC_PU0.05
+#export INPUT=/data/tHAnalysis/August7/mu200_TC_PU0.05_HGTD_HGTDpuRejx2
 export OUTPUT=./Plots
 rm -f $OUTPUT/*
 mkdir $OUTPUT
@@ -29,7 +31,7 @@ mkdir $OUTPUT
 
 
 ################################################################
-####3B tags
+####3B tags1-lep. 3 b-tag 1-2 light-jets
 ################################################################
 #root -b -q tHAnalysis/macros/plotSamples.C\(\"MET_SRB3\",\"$INPUT\",\"$OUTPUT\"\)
 #root -b -q tHAnalysis/macros/plotSamples.C\(\"HT_SRB3\",\"$INPUT\",\"$OUTPUT\"\)
@@ -38,7 +40,7 @@ mkdir $OUTPUT
 #root -b -q tHAnalysis/macros/plotSamples.C\(\"j1_pt_SRB3\",\"$INPUT\",\"$OUTPUT\"\)
 #root -b -q tHAnalysis/macros/plotSamples.C\(\"b1_pt_SRB3\",\"$INPUT\",\"$OUTPUT\"\)
 #root -b -q tHAnalysis/macros/plotSamples.C\(\"top_m_SRB3\",\"$INPUT\",\"$OUTPUT\"\)
-root -b -q tHAnalysis/macros/plotSamples.C\(\"jfwd_eta_SRB3\",\"$INPUT\",\"$OUTPUT\"\)
+root -b -q tHAnalysis/macros/plotSamples.C\(\"jfwd_eta_SRB3\",\"$INPUT\",\"$OUTPUT\",\"1-lep,\ 3\ b-tag\,\ 1-2\ light-jets\"\)
 #root -b -q tHAnalysis/macros/plotSamples.C\(\"jfwd_pt_SRB3\",\"$INPUT\",\"$OUTPUT\"\)
 #root -b -q tHAnalysis/macros/plotSamples.C\(\"dEta_jfwd_b1_SRB3\",\"$INPUT\",\"$OUTPUT\"\)
 #root -b -q tHAnalysis/macros/plotSamples.C\(\"H3_m_SRB3\",\"$INPUT\",\"$OUTPUT\"\)
@@ -64,7 +66,7 @@ root -b -q tHAnalysis/macros/plotSamples.C\(\"jfwd_eta_SRB3\",\"$INPUT\",\"$OUTP
 #root -b -q tHAnalysis/macros/plotSamples.C\(\"j1_pt_SRB4\",\"$INPUT\",\"$OUTPUT\"\)
 #root -b -q tHAnalysis/macros/plotSamples.C\(\"b1_pt_SRB4\",\"$INPUT\",\"$OUTPUT\"\)
 #root -b -q tHAnalysis/macros/plotSamples.C\(\"top_m_SRB4\",\"$INPUT\",\"$OUTPUT\"\)
-root -b -q tHAnalysis/macros/plotSamples.C\(\"jfwd_eta_SRB4\",\"$INPUT\",\"$OUTPUT\"\)
+root -b -q tHAnalysis/macros/plotSamples.C\(\"jfwd_eta_SRB4\",\"$INPUT\",\"$OUTPUT\",\"1-lep,\ 4\ b-tag\,\ 1-2\ light-jets\"\)
 #root -b -q tHAnalysis/macros/plotSamples.C\(\"jfwd_pt_SRB4\",\"$INPUT\",\"$OUTPUT\"\)
 #root -b -q tHAnalysis/macros/plotSamples.C\(\"dEta_jfwd_b1_SRB4\",\"$INPUT\",\"$OUTPUT\"\)
 #root -b -q tHAnalysis/macros/plotSamples.C\(\"H3_m_SRB4\",\"$INPUT\",\"$OUTPUT\"\)

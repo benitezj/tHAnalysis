@@ -12,12 +12,13 @@
 #include "TH1F.h"
 #include "TGraphErrors.h"
 #include "TTree.h"
+#include "UpgradePerformanceFunctions/MuonMomentumResProvider.h"
 
 class UpgradePerformanceFunctions {
 
  public:
 
-  enum UpgradeLayout {LoI, LoIVF, gold, silver, bronze, InclBrl, ExtBrl, Step1p6};
+  enum UpgradeLayout {LoI, LoIVF, gold, silver, bronze, InclBrl, ExtBrl, Step1p6,run2};
 
   enum ElectronCutLevel {looseElectron, mediumElectron, tightElectron}; 
   enum PhotonCutLevel{loosePhoton, tightPhoton}; 
@@ -50,6 +51,7 @@ class UpgradePerformanceFunctions {
   void setPhotonWorkingPoint(PhotonCutLevel cutLevel);
   void initPhotonFakeHistograms(TString PhotonFakePath);
   void setPhotonRandomSeed(unsigned seed);
+  void setPhotonNoiseScaling(float scale) { m_photonNoiseScaling = scale; };
   float getPhotonEfficiency(float ptMeV);
   float getPhotonFakeRate(float ptMeV); // jet faking photon
   float getPhotonPileupFakeRate(float ptMeV);// pileup jet faking photon
@@ -64,10 +66,16 @@ class UpgradePerformanceFunctions {
   // Muon performance functions
   void setMuonWorkingPoint(MuonCutLevel cutLevel);
   float getMuonEfficiency(float ptMeV, float eta);
-  float getMuonPtResolution(float ptMeV, float eta);
-  float getMuonQOverPtResolution(float ptMeV, float eta);
+  // These interface functions support phi for future updates.
+  // However, currently, the resolutions are INDEPENDENT of phi, hence a default can be assigned
+  float getMuonPtResolution(float ptMeV, float eta, float phi = 0);
+  float getMuonQOverPtResolution(float ptMeV, float eta, float phi = 0);
+  float getMuonMSPtResolution(float ptMeV, float eta, float phi = 0);
+  float getMuonMSQOverPtResolution(float ptMeV, float eta, float phi = 0);
+  float getMuonIDPtResolution(float ptMeV, float eta, float phi = 0);
+  float getMuonIDQOverPtResolution(float ptMeV, float eta, float phi = 0);
 
-  // Tracking performance functions
+  // Tracking performance functions 
   float getTrackPtResolution(float ptMeV, float eta);
   float getTrackInvPtResolution(float invptMeV, float eta);
   float getTrackPtRelativeResolution(float ptMeV, float eta);
@@ -91,6 +99,7 @@ class UpgradePerformanceFunctions {
   typedef std::pair<double,double> MET;
   MET getMETSmeared(float sumEtMeV, float METxMeV, float METyMeV, METSyst systValue=nominal);
   float getMETResolution(float sumEtMeV, METSyst systValue=nominal);  
+  TVector3 getTSTsmearing(TVector3 pthard);
 
   // Flavour-tagging performance functions
   void setFlavourTaggingCalibrationFilename(TString flavourTaggingCalibrationFilename);
@@ -129,8 +138,7 @@ class UpgradePerformanceFunctions {
   // HGTD setters
   void setUseHGTD0(bool usehgtd0 = false); // turn on the HGTD in the forward region for eta 2.4 - 4.3
   void setUseHGTD1(bool usehgtd1 = false); // turn on the HGTD in the forward region for eta 0.0 - 4.3
-  void setUseHGTD_PUrejx2(bool purejx2 = false); // HGTD on => PU rejection increases by factor of 2 (default is HS eff increases by 15%)
-  void setUseHGTDbtag(bool usehgtdbtag = false) { m_bUseHGTDbtag = usehgtdbtag; }  // turn on the HGTD improvements for b-tagging (default = increased light-jet rejection
+  void setUseHGTDbtag(bool usehgtdbtag = false) { m_bUseHGTDbtag = usehgtdbtag; }  
   void setbtagScheme(TString btagscheme) { m_btagScheme=btagscheme; }  // choose btag scheme (lrej|crej|beff, corresponding to increased light-jet/c-jet rejection or b-jet efficiency)
   float getHGTDMinEta(); // returns minimum eta for the HGTD depending on the scenario (0/1)
   float getHGTDMaxEta(); // returns maximum eta for the HGTD, currently 4.3
@@ -157,6 +165,13 @@ class UpgradePerformanceFunctions {
   float fEffMediumArray[m_nPUPtBins];
   float fEffExtendedArray[m_nPUPtBins];
 
+  // Step 1.6 onwards TC implementation
+  TF1 *func_TC_lt50;
+  TF1 *func_TC_gt50;
+  TF1 *func_IH_lt50;
+  TF1 *func_IH_gt50;
+
+
   // -- new stuff for HGTD --> to be included into the Golden Scenario
   // -- first set of preliminary working points to contain only flat factors of 
   //       - 90% HS vs 10% or 50% PU
@@ -165,11 +180,10 @@ class UpgradePerformanceFunctions {
   //     -- etamin_HGTD = 2.4
   //     -- etamax_HGTD = 5.0
 
-  bool m_bUseHGTD0    = false;
-  bool m_bUseHGTD1    = false;
-  bool m_bUseHGTD_PUrejx2 = false;
+  bool m_bUseHGTD0 = false;
+  bool m_bUseHGTD1 = false;
   bool m_bUseHGTDbtag = false;  
-  TString m_btagScheme = "";   
+  TString m_btagScheme = "lrej";   
   float m_HGTD0min = 2.4;
   float m_HGTD1min = 0.0;
   float m_HGTDmax = 4.3;
@@ -201,6 +215,9 @@ class UpgradePerformanceFunctions {
   // Missing ET templates
   TH1F  *m_SumEtH[4][6];
   TGraphErrors *m_Ress[4];
+  TGraphErrors* m_met_resoperp;  //run2 parametrizations 
+  TGraphErrors* m_met_resopara; 
+  TGraphErrors* m_met_shiftpara;
 
   // Flavour tagging filename
   TString m_flavourTaggingCalibrationFilename;
@@ -216,6 +233,9 @@ class UpgradePerformanceFunctions {
   // Photon globals
   std::vector<TH1D*> hsfakes;
   std::vector<TH1D*> pufakes;
+  float m_photonNoiseScaling;
+  MuonMomentumResProvider* m_muonRes;
+
 
 };
 

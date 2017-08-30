@@ -41,11 +41,26 @@ float LUMI=3000000; //3000/fb  but in /pb (crossections are in pb)
 
 TLatex text;
 
-void DrawECMS(float x=0.16,float y=0.92){
+TCanvas C("C","",700,600);
+
+void setGlobals(){
+  ///canvas definition
+  C.SetTopMargin(0.05);
+  C.SetRightMargin(0.05);
+  C.SetLeftMargin(0.15);
+  C.SetBottomMargin(0.15);
+
+  //text style ...
+
+}
+
+
+void DrawECMS(float x=0.24,float y=0.96){
   text.SetTextColor(1);
   text.SetTextSize(0.035);
   char txt[100];
-  sprintf(txt,"pp#rightarrowtH(H#rightarrowb#bar{b}),  #sqrt{s}=13 TeV,  L = %d fb^{-1}",(int)(LUMI/1000));
+  if(LUMI>0)sprintf(txt,"pp#rightarrowtHqb, H#rightarrowb#bar{b},    #sqrt{s}=13 TeV,  L = %d fb^{-1}",(int)(LUMI/1000));
+  else sprintf(txt,"pp#rightarrowtHqb, H#rightarrowb#bar{b},    #sqrt{s}=13 TeV");
   text.DrawLatexNDC(x,y,txt);
 }
 
@@ -53,7 +68,7 @@ TString FitGausFormula("[0]*exp(-0.5*(x-[1])**2/[2]**2)");
 TString FitGausText("Mean=%.2f+/-%.2f,  Sigma=%.2f+/-%.2f");
 
 
-std::vector<std::string> m_bkgs={"tH","tWH","ttbar","ttH_dilep","ttH_semilep"};
+std::vector<std::string> m_bkgs={"tH","tWH","ttH_dilep","ttH_semilep","ttbar"};
 //std::vector<std::string> m_bkgs={"tH","ttbar"};
 std::map<std::string,int> color;
 
@@ -113,7 +128,7 @@ void getHistos(TString inputpath,std::vector<std::string> bkgs, TString histonam
   color["tH"]=kRed;
   color["tWH"]=kGreen;
   color["ttH_dilep"]=kBlue;
-  color["ttH_semilep"]=kPink;
+  color["ttH_semilep"]=kPink-4;
   
 
 

@@ -15,30 +15,8 @@ void UpgradePerformanceFunctions::setPileupEfficiencyScheme(PileupEff puscheme){
 void UpgradePerformanceFunctions::setPileupEff(float hseff){
   m_fEff = hseff;
    std::cout << " UpgradePerformanceFunctions::setPileupEff::You set efficiency to " << m_fEff << std::endl;
- 
-  // if (fabs( m_fHSEff - 0.7 ) < 0.001) {
-  //   std::cout << " Using 70% HS Efficiency working point " << std::endl;
-  //   m_bHS70 = true;
-  // } else if (fabs( m_fHSEff - 0.8 ) < 0.001){
-  //   std::cout << " Using 80% HS Efficiency working point " << std::endl;
-  //   m_bHS80 = true;
-  // } else if (fabs( m_fHSEff - 0.9 ) < 0.001){
-  //   std::cout << " Using 90% HS Efficiency working point " << std::endl;
-  //   m_bHS90 = true;
-  // }
+
 }
-
-// void UpgradePerformanceFunctions::setPileupHSForwardEff(float hseff){
-//   m_fHSEffForw = hseff;
-// }
-
-// void UpgradePerformanceFunctions::setPileupLETFTrackConf(bool bletf){
-//   m_bUseLetf = bletf;
-// }
-
-// void UpgradePerformanceFunctions::setPileupUseMediumTracker(bool bmedtc){
-//   m_bUseMedTC = bmedtc;
-// }
 
 void UpgradePerformanceFunctions::setPileupUseTrackConf(bool usetr) {
   m_bUseTrackConf = usetr;
@@ -95,29 +73,33 @@ void UpgradePerformanceFunctions::initializePileupTemplates(TString pileupTempla
 
   m_fPileupTCMaxPtMeV = 70000.;
   
-  bool b05 = false;
-  bool b25 = false;
-  bool b30 = false;
-  bool b35 = false;
-  bool b40 = false;
-  bool b50 = false;
+  // bool b05 = false;
+  // bool b25 = false;
+  // bool b30 = false;
+  // bool b35 = false;
+  // bool b40 = false;
+  // bool b50 = false;
   
   // init of bools
-  if (fabs(m_fPileupJetThresholdMeV - 25000.) < 0.1)
-    b25 = true;
-  else if (fabs(m_fPileupJetThresholdMeV - 30000.) < 0.1)
-    b30 = true;
-  else if (fabs(m_fPileupJetThresholdMeV - 35000.) < 0.1)
-    b35 = true;
-  else if (fabs(m_fPileupJetThresholdMeV - 40000.) < 0.1)
-    b40 = true;
-  else if (fabs(m_fPileupJetThresholdMeV - 50000.) < 0.1)
-    b50 = true;
-  else
-    b05 = true;
+  // if (fabs(m_fPileupJetThresholdMeV - 25000.) < 0.1)
+  //   b25 = true;
+  // else if (fabs(m_fPileupJetThresholdMeV - 30000.) < 0.1)
+  //   b30 = true;
+  // else if (fabs(m_fPileupJetThresholdMeV - 35000.) < 0.1)
+  //   b35 = true;
+  // else if (fabs(m_fPileupJetThresholdMeV - 40000.) < 0.1)
+  //   b40 = true;
+  // else if (fabs(m_fPileupJetThresholdMeV - 50000.) < 0.1)
+  //   b50 = true;
+  // else
+  //   b05 = true;
   
   std::cout << " UpgradePerformanceFunctions::initializePileupTemplates::Your pileup jet pt threshold is " << m_fPileupJetThresholdMeV << " MeV " << std::endl;
   
+  if (m_fPileupJetThresholdMeV < 20000.){
+    std::cout << "WARNING::initializePileupTemplates - Lowest threshold you can get is 20 GeV and that will be automatically set now" << std::endl;
+    m_fPileupJetThresholdMeV = 20000.;
+  }
   // m_bHS70 = false;
   // m_bHS80 = false;
   // m_bHS90 = false;
@@ -142,44 +124,44 @@ void UpgradePerformanceFunctions::initializePileupTemplates(TString pileupTempla
   TString treeE;
   
   // based on your threshold, open the right tree
-  if (b25) {
-    treeName = "PUEvtTree25";
-    treePt = "m25_pt";
-    treeEta = "m25_eta";
-    treePhi = "m25_phi";
-    treeE = "m25_E";
-  } else if (b30) {
+  // if (b25) {
+  //   treeName = "PUEvtTree25";
+  //   treePt = "m25_pt";
+  //   treeEta = "m25_eta";
+  //   treePhi = "m25_phi";
+  //   treeE = "m25_E";
+  // } else if (b30) {
     treeName = "PUEvtTree30";
     treePt = "m30_pt";
     treeEta = "m30_eta";
     treePhi = "m30_phi";
     treeE = "m30_E";
-  } else if (b35) {
-    treeName = "PUEvtTree35";
-    treePt = "m35_pt";
-    treeEta = "m35_eta";
-    treePhi = "m35_phi";
-    treeE = "m35_E";
-  } else if (b40) {
-    treeName = "PUEvtTree40";
-    treePt = "m40_pt";
-    treeEta = "m40_eta";
-    treePhi = "m40_phi";
-    treeE = "m40_E";
-  } else if (b50) {
-    treeName = "PUEvtTree50";
-    treePt = "m50_pt";
-    treeEta = "m50_eta";
-    treePhi = "m50_phi";
-    treeE = "m50_E";
-  } else {
-    treeName = "PUEvtTree05";
-    treePt = "m05_pt";
-    treeEta = "m05_eta";
-    treePhi = "m05_phi";
-    treeE = "m05_E";
-    std::cout << "WARNING::initializePileupTemplates - You have set your jet threshold to " << m_fPileupJetThresholdMeV << " MeV -> outside of allowed range, no threshold set and you will get plenty of PU jets!! (and it will take ages). Have a nice day" << b05 << std::endl;
-  }
+  // } else if (b35) {
+  //   treeName = "PUEvtTree35";
+  //   treePt = "m35_pt";
+  //   treeEta = "m35_eta";
+  //   treePhi = "m35_phi";
+  //   treeE = "m35_E";
+  // } else if (b40) {
+  //   treeName = "PUEvtTree40";
+  //   treePt = "m40_pt";
+  //   treeEta = "m40_eta";
+  //   treePhi = "m40_phi";
+  //   treeE = "m40_E";
+  // } else if (b50) {
+  //   treeName = "PUEvtTree50";
+  //   treePt = "m50_pt";
+  //   treeEta = "m50_eta";
+  //   treePhi = "m50_phi";
+  //   treeE = "m50_E";
+  // } else {
+  //   treeName = "PUEvtTree05";
+  //   treePt = "m05_pt";
+  //   treeEta = "m05_eta";
+  //   treePhi = "m05_phi";
+  //   treeE = "m05_E";
+  //   std::cout << "WARNING::initializePileupTemplates - You have set your jet threshold to " << m_fPileupJetThresholdMeV << " MeV -> outside of allowed range, no threshold set and you will get plenty of PU jets!! (and it will take ages). Have a nice day" << b05 << std::endl;
+  // }
   
   std::cout << " UpgradePerformanceFunctions::initializePileupTemplates::Initializing pileupTemplates with name: " << treeName 
 	    << " PtBranch name: " << treePt 
@@ -274,6 +256,9 @@ void UpgradePerformanceFunctions::initializePileupTemplates(TString pileupTempla
 
   // mu 200
 
+  if ( !(m_layout==Step1p6) ){
+
+
   if (m_pueff == HS && fabs(m_fEff - 0.7) < 0.001 && fabs( m_avgMu - 200)  < 0.1){
     for (int i = 0; i < m_nPUPtBins; i++)
       fEffNominalArray[i] = fHS70Nominal200[i];
@@ -291,13 +276,16 @@ void UpgradePerformanceFunctions::initializePileupTemplates(TString pileupTempla
     for (int i = 0; i < m_nPUPtBins; i++)
       fEffNominalArray[i] = fPU02Nominal200[i];
   }
-  if (m_pueff == PU && fabs(m_fEff - 0.05) < 0.001 && fabs( m_avgMu - 200)  < 0.1){
+  else if (m_pueff == PU && fabs(m_fEff - 0.05) < 0.001 && fabs( m_avgMu - 200)  < 0.1){
     for (int i = 0; i < m_nPUPtBins; i++)
       fEffNominalArray[i] = fPU05Nominal200[i];
   }
-  if (m_pueff == PU && fabs(m_fEff - 0.1) < 0.001 && fabs( m_avgMu - 200)  < 0.1){
+  else if (m_pueff == PU && fabs(m_fEff - 0.1) < 0.001 && fabs( m_avgMu - 200)  < 0.1){
     for (int i = 0; i < m_nPUPtBins; i++)
       fEffNominalArray[i] = fPU10Nominal200[i];
+  }else{
+    std::cout << " WARNING :: UpgradePerformanceFunctions::initializePileupTemplates:: You haven't provided working point consistent with PU::Gold " << std::endl;
+    return;
   }
 
   // mu 140
@@ -349,13 +337,16 @@ void UpgradePerformanceFunctions::initializePileupTemplates(TString pileupTempla
     for (int i = 0; i < m_nPUPtBins; i++)
       fEffMediumArray[i] = fPU02Medium200[i];
   }
-  if (m_pueff == PU && fabs(m_fEff - 0.05) < 0.001 && fabs( m_avgMu - 200)  < 0.1){
+  else if (m_pueff == PU && fabs(m_fEff - 0.05) < 0.001 && fabs( m_avgMu - 200)  < 0.1){
     for (int i = 0; i < m_nPUPtBins; i++)
       fEffMediumArray[i] = fPU05Medium200[i];
   }
-  if (m_pueff == PU && fabs(m_fEff - 0.1) < 0.001 && fabs( m_avgMu - 200)  < 0.1){
+  else if (m_pueff == PU && fabs(m_fEff - 0.1) < 0.001 && fabs( m_avgMu - 200)  < 0.1){
     for (int i = 0; i < m_nPUPtBins; i++)
       fEffMediumArray[i] = fPU10Medium200[i];
+  }else{
+    std::cout << " WARNING :: UpgradePerformanceFunctions::initializePileupTemplates:: You haven't provided working point consistent with PU::Gold " << std::endl;
+    return;
   }
 
   // mu 140
@@ -407,13 +398,16 @@ void UpgradePerformanceFunctions::initializePileupTemplates(TString pileupTempla
     for (int i = 0; i < m_nPUPtBins; i++)
       fEffExtendedArray[i] = fPU02Extended200[i];
   }
-  if (m_pueff == PU && fabs(m_fEff - 0.05) < 0.001 && fabs( m_avgMu - 200)  < 0.1){
+  else if (m_pueff == PU && fabs(m_fEff - 0.05) < 0.001 && fabs( m_avgMu - 200)  < 0.1){
     for (int i = 0; i < m_nPUPtBins; i++)
       fEffExtendedArray[i] = fPU05Extended200[i];
   }
-  if (m_pueff == PU && fabs(m_fEff - 0.1) < 0.001 && fabs( m_avgMu - 200)  < 0.1){
+  else if (m_pueff == PU && fabs(m_fEff - 0.1) < 0.001 && fabs( m_avgMu - 200)  < 0.1){
     for (int i = 0; i < m_nPUPtBins; i++)
       fEffExtendedArray[i] = fPU10Extended200[i];
+  }else{
+    std::cout << " WARNING :: UpgradePerformanceFunctions::initializePileupTemplates:: You haven't provided working point consistent with PU::Gold " << std::endl;
+    return;
   }
 
   // mu 140
@@ -444,12 +438,71 @@ void UpgradePerformanceFunctions::initializePileupTemplates(TString pileupTempla
       fEffExtendedArray[i] = fPU10Extended140[i];
   }
 
-  // additional HGTD prints - makes not much sense
+  }
 
-  // if (m_bUseHGTD0 && m_bUseTrackConf){
-  //   std::cout << " Using HGTD0 parametrisation with HSEff = " <<  m_HGTDHSEff << " and PUEff = " << m_HGTDPUEff << std::endl;
-  // }
+  // as of ITk Step 1.6 we have different parametrisation: pol3 below and above 50 GeV
 
+  // pt < 50 GeV
+  float pars_ITK_20_lt50[4] = {0.865632, -0.048153, 0.0411527, -0.0130769};     // ITk 2% PU
+  float pars_ITKHGTD_20_lt50[4]={1.00826, -0.171095, 0.0667378, -0.00937643};   // ITk+HGTD 2% PU
+  float pars_ITK_10_lt50[4]={0.977724, -0.310333, 0.160202, -0.0318497};        // ITk 1% PU
+  float pars_ITKHGTD_10_lt50[4]={1.0473, -0.340747, 0.165846, -0.0265715};      // ITk+HGTD 1% PU
+  float pars_ITK_05_lt50[4]={0.903501, -0.306444, 0.146269, -0.0300982};        // ITk 0.5% PU
+  float pars_ITKHGTD_05_lt50[4]={1.0122, -0.311178, 0.145689, -0.024726};       // ITk+HGTD 0.5% PU
+ 
+  // pt > 50 GeV
+  float pars_ITK_20_gt50[4] ={1.00589, -0.0941386, 0.0655066, -0.0158565};      // ITk 2% PU
+  float pars_ITKHGTD_20_gt50[4]={1.01645, -0.0630882, 0.0235701, -0.00364137};  // ITk+HGTD 2% PU
+  float pars_ITK_10_gt50[4]={0.917016, -0.0202391, 0.0501683, -0.0201117};      // ITk 1% PU
+  float pars_ITKHGTD_10_gt50[4]={0.996236, -0.0552977, 0.028086, -0.00617803};  // ITk+HGTD 1% PU
+  float pars_ITK_05_gt50[4]={0.743145, 0.201092, -0.118611, 0.00935206};        // ITk 0.5% PU
+  float pars_ITKHGTD_05_gt50[4]={1.04009, -0.117583, 0.0502864, -0.0101477};    // ITk+HGTD 0.5% PU
+
+  func_TC_lt50 = new TF1("func_TC_lt50","[0]+[1]*x + [2]*x*x + [3]*x*x*x",1.2,3.8); // default ITk only
+  func_TC_gt50 = new TF1("func_TC_gt50","[0]+[1]*x + [2]*x*x + [3]*x*x*x",1.2,3.8);
+  func_IH_lt50 = new TF1("func_IH_lt50","[0]+[1]*x + [2]*x*x + [3]*x*x*x",1.2,3.8); // IH = ITk + HGTD
+  func_IH_gt50 = new TF1("func_IH_gt50","[0]+[1]*x + [2]*x*x + [3]*x*x*x",1.2,3.8);
+
+  if ( m_layout==Step1p6 ){
+      if (m_pueff == PU && fabs(m_fEff - 0.02) < 0.001 && fabs( m_avgMu - 200)  < 0.1){  // "standard setting"
+	for (int i = 0; i < 4; i++){
+	  func_TC_lt50->SetParameter(i,pars_ITK_20_lt50[i]);
+	  func_TC_gt50->SetParameter(i,pars_ITK_20_gt50[i]);
+	  func_IH_lt50->SetParameter(i,pars_ITKHGTD_20_lt50[i]);
+	  func_IH_gt50->SetParameter(i,pars_ITKHGTD_20_gt50[i]);
+	}
+      }
+      else if (m_pueff == PU && fabs(m_fEff - 0.01) < 0.001 && fabs( m_avgMu - 200)  < 0.1){  // PU 1% ITk only
+	for (int i = 0; i < 4; i++){
+	  func_TC_lt50->SetParameter(i,pars_ITK_10_lt50[i]);
+	  func_TC_gt50->SetParameter(i,pars_ITK_10_gt50[i]);
+	  func_IH_lt50->SetParameter(i,pars_ITKHGTD_10_lt50[i]);
+	  func_IH_gt50->SetParameter(i,pars_ITKHGTD_10_gt50[i]);
+	}
+      }
+      else if (m_pueff == PU && fabs(m_fEff - 0.005) < 0.0001 && fabs( m_avgMu - 200)  < 0.1){  // PU 0.5% ITk only
+	for (int i = 0; i < 4; i++){
+	  func_TC_lt50->SetParameter(i,pars_ITK_05_lt50[i]);
+	  func_TC_gt50->SetParameter(i,pars_ITK_05_gt50[i]);
+	  func_IH_lt50->SetParameter(i,pars_ITKHGTD_05_lt50[i]);
+	  func_IH_gt50->SetParameter(i,pars_ITKHGTD_05_gt50[i]);
+	}
+      }
+      else{
+	std::cout << " WARNING :: UpgradePerformanceFunctions::initializePileupTemplates:: You haven't provided working point consistent with ITk 1.6 " << std::endl;
+	return;
+      }
+    
+  } else {
+    // in older than Step 1.6 version you won't use the new parametrisation however the function needs to be initialised -> dummy
+    for (int i = 0; i < 4; i++){
+      func_TC_lt50->SetParameter(i,100.);
+      func_TC_gt50->SetParameter(i,100.);
+      func_IH_lt50->SetParameter(i,100.);
+      func_IH_gt50->SetParameter(i,100.);
+    }
+  }
+  
 
   return;
 }
@@ -466,10 +519,15 @@ std::vector<TLorentzVector> UpgradePerformanceFunctions::getPileupJets() {
   if (nj > 0) { // loop over number of actual PU jets in the event
     for (int ia = 0; ia < nj; ia++) {
       TLorentzVector jet;
-      // Jets are stored with units of GeV, so we need to convert to MeV output
-      jet.SetPtEtaPhiE(m_pileupPt30->at(ia),m_pileupEta30->at(ia),
-		       m_pileupPhi30->at(ia),m_pileupE30->at(ia));
-      pujets.push_back(jet);
+
+      float pt = m_pileupPt30->at(ia); 
+      // pt cut - added
+      if (pt > getPileupJetPtThresholdMeV())
+	{
+	  jet.SetPtEtaPhiE(m_pileupPt30->at(ia),m_pileupEta30->at(ia),
+			   m_pileupPhi30->at(ia),m_pileupE30->at(ia));
+	  pujets.push_back(jet);
+	}
     }
   }
   return pujets;
@@ -493,16 +551,16 @@ float UpgradePerformanceFunctions::getTrackJetConfirmEff(float ptMeV, float eta,
     tceff = 1.0;
   }
   
-  if (ptGeV<30.) {
-    std::cout << "WARNING : track-jet confirmation not implemented for pT<30 GeV !" << std::endl;
+  if (ptGeV<20.) {
+    std::cout << "WARNING : track-jet confirmation not implemented for pT<20 GeV !" << std::endl;
     tceff = 1.0;
   }
 
   // completely new approach
 
-  // estimate the pT bin
+  // estimate the pT bin 
   int nPt = -1;
-  if ( 30. <= ptGeV && ptGeV < 40. )
+  if ( 20. <= ptGeV && ptGeV < 40. )
     nPt = 0;
   if ( 40. <= ptGeV && ptGeV < 50. )
     nPt = 1;
@@ -520,186 +578,284 @@ float UpgradePerformanceFunctions::getTrackJetConfirmEff(float ptMeV, float eta,
 
   // apply only in correct pt range
 
-  if (nPt > -1){
+  // now implement correctly the Step 1.6
 
-    // now clearly distinguish all three scenarios
-
-    // ----------- Bronze ------------
-
-    if ( m_layout == bronze ){
-
-      if (fabs(eta)> m_BronzeEtaMax)
-	tceff = 1.00; // nothing changes above 2.4
-      else{
-
-	if (m_pueff == HS){       // HS Efficiency Scheme
-	  if (bHS){ // HS jet
-	    tceff = m_fEff;
-	  } else { // PU jet
-	    tceff = fEffNominalArray[nPt];
-	  }
-	}
-
-	if (m_pueff == PU){       // PU Efficiency Scheme
-	  if (bHS){ // HS jet
-	    tceff = fEffNominalArray[nPt];
-	  } else { // PU jet
-	    tceff = m_fEff;
-	  }
-	}
-
-      }
-    }
-    // ----------- Silver ------------
-
-    if ( m_layout == silver ){
-      if (fabs(eta)> m_SilverEtaMax)
-	tceff = 1.00; // nothing changes above 3.2
-      else if (fabs(eta)> m_BronzeEtaMax)  { // the actual silver part
-
-	if (m_pueff == HS){       // HS Efficiency Scheme
-	  if (bHS){ // HS jet
-	    tceff = m_fEff;
-	  } else { // PU jet
-	    tceff = fEffMediumArray[nPt];
-	  }
-	}
-
-	if (m_pueff == PU){       // PU Efficiency Scheme
-	  if (bHS){ // HS jet
-	    tceff = fEffMediumArray[nPt];
-	  } else { // PU jet
-	    tceff = m_fEff;
-	  }
-	}
-      } else { // nominal part stays the same
-
-	if (m_pueff == HS){       // HS Efficiency Scheme
-	  if (bHS){ // HS jet
-	    tceff = m_fEff;
-	  } else { // PU jet
-	    tceff = fEffNominalArray[nPt];
-	  }
-	}
-
-	if (m_pueff == PU){       // PU Efficiency Scheme
-	  if (bHS){ // HS jet
-	    tceff = fEffNominalArray[nPt];
-	  } else { // PU jet
-	    tceff = m_fEff;
-	  }
-	}
-      }
-    }
-
-    // ----------- Gold ------------
-
-    if ( m_layout == gold ){
-      if (fabs(eta)> m_GoldEtaMax)
-	tceff = 1.00; // nothing changes above 3.8
+  if (m_layout!=Step1p6){
     
-      else if (fabs(eta)> m_SilverEtaMax)  { // the actual gold part
+    // std::cout << " Entering !Step1p6 " << std::endl;
 
-	if (m_pueff == HS){       // HS Efficiency Scheme
-	  if (bHS){ // HS jet
-	    tceff = m_fEff;
-	  } else { // PU jet
-	    tceff = fEffExtendedArray[nPt];
+    if (nPt > -1){
+
+      // now clearly distinguish all three scenarios
+
+      // ----------- Bronze ------------
+
+      if ( m_layout == bronze ){
+
+	if (fabs(eta)> m_BronzeEtaMax)
+	  tceff = 1.00; // nothing changes above 2.4
+	else{
+
+	  if (m_pueff == HS){       // HS Efficiency Scheme
+	    if (bHS){ // HS jet
+	      tceff = m_fEff;
+	    } else { // PU jet
+	      tceff = fEffNominalArray[nPt];
+	    }
 	  }
-	}
 
-	if (m_pueff == PU){       // PU Efficiency Scheme
-	  if (bHS){ // HS jet
-	    tceff = fEffExtendedArray[nPt];
-	  } else { // PU jet
-	    tceff = m_fEff;
+	  if (m_pueff == PU){       // PU Efficiency Scheme
+	    if (bHS){ // HS jet
+	      tceff = fEffNominalArray[nPt];
+	    } else { // PU jet
+	      tceff = m_fEff;
+	    }
+	  }
+
+	}
+      }
+      // ----------- Silver ------------
+
+      if ( m_layout == silver ){
+	if (fabs(eta)> m_SilverEtaMax)
+	  tceff = 1.00; // nothing changes above 3.2
+	else if (fabs(eta)> m_BronzeEtaMax)  { // the actual silver part
+
+	  if (m_pueff == HS){       // HS Efficiency Scheme
+	    if (bHS){ // HS jet
+	      tceff = m_fEff;
+	    } else { // PU jet
+	      tceff = fEffMediumArray[nPt];
+	    }
+	  }
+
+	  if (m_pueff == PU){       // PU Efficiency Scheme
+	    if (bHS){ // HS jet
+	      tceff = fEffMediumArray[nPt];
+	    } else { // PU jet
+	      tceff = m_fEff;
+	    }
+	  }
+	} else { // nominal part stays the same
+
+	  if (m_pueff == HS){       // HS Efficiency Scheme
+	    if (bHS){ // HS jet
+	      tceff = m_fEff;
+	    } else { // PU jet
+	      tceff = fEffNominalArray[nPt];
+	    }
+	  }
+
+	  if (m_pueff == PU){       // PU Efficiency Scheme
+	    if (bHS){ // HS jet
+	      tceff = fEffNominalArray[nPt];
+	    } else { // PU jet
+	      tceff = m_fEff;
+	    }
 	  }
 	}
       }
 
-      else if (fabs(eta)> m_BronzeEtaMax)  { // medium part stays the same
+      // ----------- Gold ------------
 
-	if (m_pueff == HS){       // HS Efficiency Scheme
-	  if (bHS){ // HS jet
-	    tceff = m_fEff;
-	  } else { // PU jet
-	    tceff = fEffMediumArray[nPt];
+      if ( m_layout == gold ){
+	if (fabs(eta)> m_GoldEtaMax)
+	  tceff = 1.00; // nothing changes above 3.8
+    
+	else if (fabs(eta)> m_SilverEtaMax)  { // the actual gold part
+
+	  if (m_pueff == HS){       // HS Efficiency Scheme
+	    if (bHS){ // HS jet
+	      tceff = m_fEff;
+	    } else { // PU jet
+	      tceff = fEffExtendedArray[nPt];
+	    }
+	  }
+
+	  if (m_pueff == PU){       // PU Efficiency Scheme
+	    if (bHS){ // HS jet
+	      tceff = fEffExtendedArray[nPt];
+	    } else { // PU jet
+	      tceff = m_fEff;
+	    }
 	  }
 	}
 
-	if (m_pueff == PU){       // PU Efficiency Scheme
-	  if (bHS){ // HS jet
-	    tceff = fEffMediumArray[nPt];
-	  } else { // PU jet
-	    tceff = m_fEff;
-	  }
-	}
-      } else { // nominal part stays the same
+	else if (fabs(eta)> m_BronzeEtaMax)  { // medium part stays the same
 
-	if (m_pueff == HS){       // HS Efficiency Scheme
-	  if (bHS){ // HS jet
-	    tceff = m_fEff;
-	  } else { // PU jet
-	    tceff = fEffNominalArray[nPt];
+	  if (m_pueff == HS){       // HS Efficiency Scheme
+	    if (bHS){ // HS jet
+	      tceff = m_fEff;
+	    } else { // PU jet
+	      tceff = fEffMediumArray[nPt];
+	    }
 	  }
-	}
 
-	if (m_pueff == PU){       // PU Efficiency Scheme
-	  if (bHS){ // HS jet
-	    tceff = fEffNominalArray[nPt];
-	  } else { // PU jet
-	    tceff = m_fEff;
+	  if (m_pueff == PU){       // PU Efficiency Scheme
+	    if (bHS){ // HS jet
+	      tceff = fEffMediumArray[nPt];
+	    } else { // PU jet
+	      tceff = m_fEff;
+	    }
+	  }
+	} else { // nominal part stays the same
+
+	  if (m_pueff == HS){       // HS Efficiency Scheme
+	    if (bHS){ // HS jet
+	      tceff = m_fEff;
+	    } else { // PU jet
+	      tceff = fEffNominalArray[nPt];
+	    }
+	  }
+
+	  if (m_pueff == PU){       // PU Efficiency Scheme
+	    if (bHS){ // HS jet
+	      tceff = fEffNominalArray[nPt];
+	    } else { // PU jet
+	      tceff = m_fEff;
+	    }
 	  }
 	}
       }
     }
-  }
 
-  //  std::cout  << " m_bUseHGTD0: " << m_bUseHGTD0 << " m_bUseHGTD1: " << m_bUseHGTD1 << std::endl;
-  // HGTD add-on two scenarios which surely could be done nicer
-  if  (m_bUseHGTD0 || m_bUseHGTD1){
+    //  std::cout  << " m_bUseHGTD0: " << m_bUseHGTD0 << " m_bUseHGTD1: " << m_bUseHGTD1 << std::endl;
+    // HGTD add-on two scenarios which surely could be done nicer
+    if  (m_bUseHGTD0 || m_bUseHGTD1){
 
-    float minHGTD = 0.;
-    if (m_bUseHGTD0)
-      minHGTD =  m_HGTD0min;
-    if (m_bUseHGTD1)
-      minHGTD =  m_HGTD1min;
+      //      std::cout << "UpgradePerformanceFunctions::getTrackJetConfirmEff::Warning You are using an obsolete HGTD implementation, for correct one, initialise with layout=Step1p6" << std::endl;
 
-    if (fabs(eta)> m_HGTDmax){
+      float minHGTD = 0.;
+      if (m_bUseHGTD0)
+	minHGTD =  m_HGTD0min;
+      if (m_bUseHGTD1)
+	minHGTD =  m_HGTD1min;
+
+      if (fabs(eta)> m_HGTDmax){
 	tceff = 1.00; // nothing changes above 4.3
-    } 
-    else if ( fabs(eta) > minHGTD ) {
-      // simple scenario for the start - flat in pt (20-100 GeV) and eta, only affecting the HS efficiency --> assumes 2%PU scenario
-      //      if (ptGeV > 30. && ptGeV < 100.){
-      std::cout << "Spyros CHECK3: current tceff = " << tceff << " , pt = " << ptGeV << std::endl;
-      if (ptGeV > 20. && ptGeV < 100.){
-	float tceff1 = tceff;
-	
-	// New implementation from Richard
-	if(m_bUseHGTD_PUrejx2){
+      } 
+      else if ( fabs(eta) > minHGTD ) {
+	// simple scenario for the start - flat in pt (20-100 GeV) and eta, only affecting the HS efficiency --> assumes 2%PU scenario
+	//      if (ptGeV > 30. && ptGeV < 100.){
+	if (ptGeV > 20. && ptGeV < 100.){
+	  float tceff1 = tceff;
 	  if (!bHS){
 	    if (fabs(eta) > 2.4)
 	      tceff = tceff1*0.5;
-	    //else
-	    //  tceff = tceff1+0.05;
-	  }
-	}
-	
-	else {
-	  if (bHS){
-	    if (fabs(eta) > 2.4)
-	      tceff = tceff1+0.15;
 	    else
-	      tceff = tceff1+0.05;
+	      tceff = tceff1;
 	  }
 	}
-
       }
-      std::cout << "Spyros CHECK4: current tceff = " << tceff << " , pt = " << ptGeV << std::endl;
+      // else we keep what is in the central region
     }
-    // else we keep what is in the central region
-  }
+  } else{
 
+    // new implementation of the track confirmation
+
+    // PU scheme only - 2%, 1%, 0.5%
+
+    if (m_pueff == PU){       // PU Efficiency Scheme
+
+      if (!bHS && ptGeV < 100.) // flat efficiency for PU
+	tceff = m_fEff;
+      else{ // HS jet
+	// pt bin 
+
+	if (ptGeV > 20. && ptGeV < 50.){
+      
+	  if (m_bUseHGTD0 || m_bUseHGTD1){
+
+	    if (fabs(eta) > 2.4 && fabs(eta) < m_GoldEtaMax) {// forward region - always HGTD once at least one ON
+	      tceff = func_IH_lt50->Eval(fabs(eta));
+	    }
+	    else if ( fabs(eta) > 1.2 && fabs(eta) < 2.4 ){
+	    
+	      if (m_bUseHGTD0) // nominal IDR HGTD
+		tceff = func_TC_lt50->Eval(fabs(eta)); // below 2.4 us ITk only
+	      else if (m_bUseHGTD1) // nominal IDR HGTD
+		tceff = func_IH_lt50->Eval(fabs(eta)); // below 2.4 us ITk+"HGTD" only
+	      else
+		std::cout << " This should never happen " << std::endl;
+	    } 
+	    else if  ( fabs(eta) <= 1.2 ){
+
+	      if (m_bUseHGTD0) // nominal IDR HGTD
+		tceff = func_TC_lt50->Eval(1.2); // below 2.4 us ITk only
+	      else if (m_bUseHGTD1) // nominal IDR HGTD
+		tceff = func_IH_lt50->Eval(1.2); // below 2.4 us ITk+"HGTD" only
+	      else
+		std::cout << " This should never happen " << std::endl;
+	    }
+	    else{
+	      std::cout << "UpgradePerformanceFunctions::getTrackJetConfirmEff::Warning You are using eta range outside of the generally adopted areng (<3.8), your eta is = " << eta << std::endl;
+	    }
+	      
+	  }else{ // ITk only
+
+	    if (fabs(eta) > 1.2 && fabs(eta) < m_GoldEtaMax) {// forward region - always HGTD once at least one ON
+	      tceff = func_TC_lt50->Eval(fabs(eta));
+	    }
+	    else if  ( fabs(eta) <= 1.2 ){
+	      tceff = func_TC_lt50->Eval(1.2); // below 2.4 us ITk only
+	    } 
+	    else{
+	      std::cout << "UpgradePerformanceFunctions::getTrackJetConfirmEff::Warning You are using eta range outside of the generally adopted areng (<3.8), your eta is = " << eta << std::endl;
+	    }
+	  } // end of ITk vs HGTDx
+
+	} // end of low pt bin
+	else if (ptGeV > 50. &&  ptGeV < 100.){
+	  if (m_bUseHGTD0 || m_bUseHGTD1){
+
+	    if (fabs(eta) > 2.4 && fabs(eta) < m_GoldEtaMax) {// forward region - always HGTD once at least one ON
+	      tceff = func_IH_gt50->Eval(fabs(eta));
+	    }
+	    else if ( fabs(eta) > 1.2 && fabs(eta) < 2.4 ){
+	    
+	      if (m_bUseHGTD0) // nominal IDR HGTD
+		tceff = func_TC_gt50->Eval(fabs(eta)); // below 2.4 us ITk only
+	      else if (m_bUseHGTD1) // nominal IDR HGTD
+		tceff = func_IH_gt50->Eval(fabs(eta)); // below 2.4 us ITk+"HGTD" only
+	      else
+		std::cout << " This should never happen " << std::endl;
+	    } 
+	    else if  ( fabs(eta) <= 1.2 ){
+
+	      if (m_bUseHGTD0) // nominal IDR HGTD
+		tceff = func_TC_gt50->Eval(1.2); // below 2.4 us ITk only
+	      else if (m_bUseHGTD1) // nominal IDR HGTD
+		tceff = func_IH_gt50->Eval(1.2); // below 2.4 us ITk+"HGTD" only
+	      else
+		std::cout << " This should never happen " << std::endl;
+	    }
+	    else{
+	      std::cout << "UpgradePerformanceFunctions::getTrackJetConfirmEff::Warning You are using eta range outside of the generally adopted range (<3.8), your eta is = " << eta << std::endl;
+	    }
+	      
+	  }else{ // ITk only
+
+	    if (fabs(eta) > 1.2 && fabs(eta) < m_GoldEtaMax) {// forward region - always HGTD once at least one ON
+	      tceff = func_TC_gt50->Eval(fabs(eta));
+	    }
+	    else if  ( fabs(eta) <= 1.2 ){
+	      tceff = func_TC_gt50->Eval(1.2); // below 2.4 us ITk only
+	    } 
+	    else{
+	      std::cout << "UpgradePerformanceFunctions::getTrackJetConfirmEff::Warning You are using eta range outside of the generally adopted range (<3.8), your eta is = " << eta << std::endl;
+	    }
+	  } // end of ITk vs HGTDx
+	} // end of high pT bin
+      }
+    }
+    else{
+      std::cout << "UpgradePerformanceFunctions::getTrackJetConfirmEff::Warning You are using an unsupported HGTD implementation (HS scheme)!" << std::endl;
+      std::cout << " -> for correct one, initialise with  m_upgrade->setPileupEfficiencyScheme(UpgradePerformanceFunctions::PileupEff::PU) " << std::endl;
+      tceff = 1.0;
+    }
+  } // end of Step 1.6 branch
+
+  //  std::cout << "UpgradePerformanceFunctions::getTrackJetConfirmEff:: bHS: " << bHS <<" pt: " << ptGeV << " eta: " << eta << " tc: " << tceff << std::endl;
   
   return tceff;
 }
@@ -712,6 +868,7 @@ void UpgradePerformanceFunctions::setUseHGTD0(bool usehgtd0){
   } else { // max trigger eta stays default 3.2
     m_JetTrig4jMin  = m_HGTD0MinTrigPt;
   }
+  std::cout << "UpgradePerformanceFunctions::setUseHGTD0 is set to " << m_bUseHGTD0 << std::endl;
 
 }
 
@@ -724,11 +881,8 @@ void UpgradePerformanceFunctions::setUseHGTD1(bool usehgtd1){
     m_JetTrig4jMin  = m_HGTD1MinTrigPt;
   }
 
+  std::cout << "UpgradePerformanceFunctions::setUseHGTD1 is set to " << m_bUseHGTD1 << std::endl;
 
-}
-
-void UpgradePerformanceFunctions::setUseHGTD_PUrejx2(bool purejx2){
-  m_bUseHGTD_PUrejx2 = purejx2;
 }
 
 void UpgradePerformanceFunctions::extendJetTrigger(bool exttrig){
