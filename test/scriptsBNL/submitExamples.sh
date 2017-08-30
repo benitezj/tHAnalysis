@@ -23,7 +23,7 @@ fi
 #$command 
 
 # mu=200 no Pileup Jets - smearing with track confirmation const PU efficiency 2% (ITk only) => BASELINE
-#$command -s -noPUJets 
+$command -s -noPUJets 
 
 
 ####
@@ -31,16 +31,16 @@ fi
 ####
 
 # mu=200 no track confirmation
-#$command -s -noTC
+$command -s -noTC
 #
 ## mu=200 track confirmation const PU efficiency 2% 
-#$command -s -PU 0.02
+$command -s -PU 0.02
 #
-## mu=200 track confirmation const PU efficiency 5% 
-#$command -s -PU 0.05
+## mu=200 track confirmation const PU efficiency 1% 
+$command -s -PU 0.01
 #
-## mu=200 track confirmation const PU efficiency 10% 
-#$command -s -PU 0.10
+## mu=200 track confirmation const PU efficiency 0.5% 
+$command -s -PU 0.005
 #
 ## mu=200 track confirmation const HS efficiency 70% 
 #$command -s -HS 0.70
@@ -57,15 +57,15 @@ fi
 
 # mu=200 track confirmation const PU efficiency 2% + HGTD
 #$command -s -HGTD -PU 0.02
-#$command -s -HGTD -purej -PU 0.02
+$command -s -HGTD -purej -PU 0.02
 
-# mu=200 track confirmation const PU efficiency 5% + HGTD
+# mu=200 track confirmation const PU efficiency 1% + HGTD
 #$command -s -HGTD -PU 0.05
-$command -s -HGTD -purej -PU 0.05
+$command -s -HGTD -purej -PU 0.01
 
-# mu=200 track confirmation const PU efficiency 10% + HGTD
+# mu=200 track confirmation const PU efficiency 0.05% + HGTD
 #$command -s -HGTD -PU 0.10
-#$command -s -HGTD -purej -PU 0.10
+$command -s -HGTD -purej -PU 0.005
 
 # mu=200 track confirmation const HS efficiency 70% + HGTD
 #$command -s -HGTD -HS 0.70
@@ -85,16 +85,27 @@ $command -s -HGTD -purej -PU 0.05
 
 # mu=200 track confirmation const PU efficiency 5% + HGTD
 #$command -s -HGTD -PU 0.05
-#$command -s -HGTD -purej -PU 0.05 -btagOP 85
+#$command -s -HGTD -purej -PU 0.02 -btagOP 85
 
 ####
 # All options below are for testing the improvement in l-jet/c-jet rejection or b-efficiency with the HGTD
 ####
 
-#$command -s -HGTD -HGTDbtag lrej -purej -PU 0.05
+#$command -s -HGTD -HGTDbtag lrej -purej -PU 0.02
 
-#$command -s -HGTD -HGTDbtag crej -purej -PU 0.05
+#$command -s -HGTD -HGTDbtag crej -purej -PU 0.02
 
-#$command -s -HGTD -HGTDbtag beff -purej -PU 0.05
+#$command -s -HGTD -HGTDbtag beff -purej -PU 0.02
+
+####
+# All options below are for testing the improvement in l-jet/c-jet rejection or b-efficiency with the HGTD w/ 85% WP
+####
+
+#$command -s -HGTD -HGTDbtag lrej -purej -PU 0.02 -btagOP 85 
+
+#$command -s -HGTD -HGTDbtag crej -purej -PU 0.02 -btagOP 85
+
+#$command -s -HGTD -HGTDbtag beff -purej -PU 0.02 -btagOP 85
+
 
 exit 0

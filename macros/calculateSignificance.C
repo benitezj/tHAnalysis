@@ -76,10 +76,10 @@ std::pair<float,float> LLR(const TH1F *hSig, const TH1F *hBkg) {
   return LLR;
 }
 
-std::pair<float,float> calculateSignificanceLoop(const TString& setup, const TString& dist) {
+std::pair<float,float> calculateSignificanceLoop(const TString& setup, const TString& dist, const float kappa) {
   
   // Directory where input root files are stored
-  TString dir = "/usatlas/u/sargyrop/tHFramework/OutputRootFiles";
+  TString dir = "/usatlas/u/sargyrop/tHFramework/OutputRootFiles/ele_eta4p0";
    
   // samples
   TFile *f_bg_ttbar  = TFile::Open(TString::Format("%s/%s/ttbar/ttbar.root", dir.Data(), setup.Data()), "read");
@@ -95,11 +95,21 @@ std::pair<float,float> calculateSignificanceLoop(const TString& setup, const TSt
   TH1F *h_sg_tH     = (TH1F*)f_sg_tH->Get("events");
   TH1F *h_sg_tWH    = (TH1F*)f_sg_tWH->Get("events");
   
-  float scale_ttbar  = 3000.*452.2944528/h_bg_ttbar->GetBinContent(2);
-  float scale_ttH_sl = 3000.*0.22276/h_bg_ttH_sl->GetBinContent(2);
-  float scale_ttH_dl = 3000.*0.05343/h_bg_ttH_dl->GetBinContent(2);
-  float scale_tH     = 3000.*0.054157/h_sg_tH->GetBinContent(2);
-  float scale_tWH    = 3000.*0.014425/h_sg_tWH->GetBinContent(2);
+  // Calculate tH or tWH cross-section based on kappa value
+  float xsec_tH  = 2.08600e-01 - 3.38950e-01*kappa + 1.84450e-01*pow(kappa,2);
+  float xsec_tWH = 4.28000e-02 - 6.27000e-02*kappa + 4.49000e-02*pow(kappa,2);
+  
+  // This could be hacked so that the NLO k-factor and H(bb) BR is applied for all kappa
+  if (kappa == 1.0) {
+    xsec_tH = 0.04284;
+    xsec_tWH = 0.014425;
+  }
+  
+  float scale_ttbar  = 3000000.*452.2944528/h_bg_ttbar->GetBinContent(2);
+  float scale_ttH_sl = 3000000.*0.22276/h_bg_ttH_sl->GetBinContent(2);
+  float scale_ttH_dl = 3000000.*0.05343/h_bg_ttH_dl->GetBinContent(2);
+  float scale_tH     = 3000000.*xsec_tH/h_sg_tH->GetBinContent(2);
+  float scale_tWH    = 3000000.*xsec_tWH/h_sg_tWH->GetBinContent(2);
     
   // Get Histograms 
   h_bg_ttbar  = (TH1F*)f_bg_ttbar->Get(TString::Format("%s", dist.Data()));
@@ -140,37 +150,52 @@ void calculateSignificance() {
   // Suppress warnings
   gErrorIgnoreLevel = kError;
 
+  // Scan over kappa
+  bool kScan = false;
+  std::vector<float> kappas;
+  if (kScan) kappas = {-1, -0.8, -0.6, -0.4, -0.2, 0., 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0};
+  else kappas = {1.0};
+
   // Different setups used
-  std::vector<TString> setup = {"mu0",
-  				"mu200_noPUJets_TC_PU0.02",
-				"mu200_noTC",
-				"mu200_TC_PU0.02",
-				"mu200_TC_PU0.02_HGTD",
-				"mu200_TC_PU0.05_HGTD",
-				"mu200_TC_PU0.10_HGTD",
-				"mu200_TC_HS0.70_HGTD",
-				"mu200_TC_HS0.80_HGTD",
-				"mu200_TC_HS0.90_HGTD",
-				"mu200_TC_PU0.02_HGTD_HGTDbtag",
-				"mu200_TC_HS0.90_HGTD_HGTDbtag"
+  std::vector<TString> setup = {//"mu200_noPUJets_TC_PU0.02",
+				//"mu200_noTC",
+				//"mu200_TC_PU0.02",
+				"mu200_TC_PU0.02_HGTD_purej",
+				//"mu200_TC_PU0.02_HGTD_purej_btagOP85",
+				//"mu200_TC_PU0.05",
+				"mu200_TC_PU0.02_HGTD_HGTDbtag_beff_purej",
+				//"mu200_TC_PU0.02_HGTD_HGTDbtag_beff_purej_btagOP85",
+				"mu200_TC_PU0.02_HGTD_HGTDbtag_crej_purej",
+				//"mu200_TC_PU0.02_HGTD_HGTDbtag_crej_purej_btagOP85",
+				"mu200_TC_PU0.02_HGTD_HGTDbtag_lrej_purej",
+				//"mu200_TC_PU0.02_HGTD_HGTDbtag_lrej_purej_btagOP85",
+				//"mu200_TC_PU0.05_HGTD_purej",
+				//"mu200_TC_PU0.02_HGTD_purej_btagOP85"
+				//"mu200_TC_PU0.05_HGTD_purej_btagOP85",
+				//"mu200_TC_PU0.10",
+				//"mu200_TC_PU0.10_HGTD_purej"
 				};
+				
+  //std::vector<TString> setup = {"mu200_TC_PU0.05"};				
     
   // Distributions to use for calculating significance
   std::vector<TString> dists = { "jfwd_eta_SRB3",
-  			         "jfwd_eta_SRB4",
+  			         "jfwd_eta_SRB4"
 			       };
    
-  for (auto s : setup) {
-    std::cout << "Calculating LLR for : " << s << std::endl;
-    std::pair<float,float> sig, sigB3, sigB4;   
-    for (auto d : dists) {
-      sig = calculateSignificanceLoop(s, d);
-      if     (d.Contains("SRB3")) sigB3 = sig;
-      else if (d.Contains("SRB4")) sigB4 = sig;
+  for (auto k : kappas) { 
+    for (auto s : setup) {
+      std::cout << "Calculating LLR for : " << s << std::endl;
+      std::pair<float,float> sig, sigB3, sigB4;   
+      for (auto d : dists) {
+        sig = calculateSignificanceLoop(s, d, k);
+        if     (d.Contains("SRB3")) sigB3 = sig;
+        else if (d.Contains("SRB4")) sigB4 = sig;
+      }
+      float sum  = std::sqrt(std::pow(sigB3.first,2)+std::pow(sigB4.first,2));
+      float sumE = std::sqrt(std::pow(sigB3.first*sigB3.second,2)+std::pow(sigB4.first*sigB4.second,2))/sum;
+      printf("Distribution:  %5s  -  k = %2.1f   -   LLR = %6.5f +- %6.5f\n", "Sum", k, sum, sumE); 
     }
-    float sum  = std::sqrt(std::pow(sigB3.first,2)+std::pow(sigB4.first,2));
-    float sumE = std::sqrt(std::pow(sigB3.first*sigB3.second,2)+std::pow(sigB4.first*sigB4.second,2))/sum;
-    printf("Distribution:  %35s   -  LLR = %6.5f +- %6.5f\n", "Sum", sum, sumE); 
   }
 
 }

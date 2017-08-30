@@ -2,7 +2,7 @@
 
 # Sample declaration
 samples=(ttbar tWH tH ttH_dilep ttH_semilep)
-#samples=(ttH_semilep)
+#samples=(tH)
 
 # Default options
 smearing=false
@@ -11,7 +11,7 @@ trackConfirm=true
 HGTD=false
 HGTDBTAG=false
 btagscheme="lrej"
-purej=false
+purej=true
 ntup=""
 effScheme="PU"
 puEff=0.02
@@ -56,9 +56,9 @@ done
 
 # Check whether supported HS and PU schemes have been provided
 if [[ "$smearing" == true ]] ; then
-  if [[ "$effScheme" == "PU" && "$puEff" != "0.02" && "$puEff" != "0.05" && "$puEff" != "0.10" ]] ; then
+  if [[ "$effScheme" == "PU" && "$puEff" != "0.02" && "$puEff" != "0.01" && "$puEff" != "0.005" ]] ; then
     echo "Unsupported PU scheme: $puEff"
-    echo "Supported values: 0.02, 0.05, 0.10"
+    echo "Supported values: 0.02, 0.01, 0.005"
     exit 2
   fi
   if [[ "$effScheme" == "HS" && "$puEff" != "0.70" && "$puEff" != "0.80" && "$puEff" != "0.90" ]] ; then

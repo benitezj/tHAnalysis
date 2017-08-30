@@ -146,14 +146,14 @@ void cutOptimisationTree() {
   TCut wPreSel = preSel * "eventWeight"; // eventWeight already contains the trigger weight
   
   // Additional cuts to try
-  std::vector<Cut> addCuts = { {"FoxW1",      {0,1},      0.1, CutType::LOW},  
+  std::vector<Cut> addCuts = { {"sphericity", {0,1},      0.1, CutType::HIGH},
+			       {"sphericity", {0,1},      0.1, CutType::LOW},
+  			       {"FoxW1",      {0,1},      0.1, CutType::LOW},  
 			       {"FoxW2",      {0,1},      0.1, CutType::LOW},  
-			       {"FoxW3",      {0,1},      0.1, CutType::LOW},  
-			       {"shpericity", {0,1},      0.1, CutType::LOW}, 
+			       {"FoxW3",      {0,1},      0.1, CutType::LOW},  			        
 			       {"FoxW1",      {0,1},      0.1, CutType::HIGH},  
 			       {"FoxW2",      {0,1},      0.1, CutType::HIGH},  
 			       {"FoxW3",      {0,1},      0.1, CutType::HIGH},  
-			       {"shpericity", {0,1},      0.1, CutType::HIGH},
 			       {"H2_m",       {10,250},   10,    CutType::LOW},
 			       {"H3_m",       {10,250},   10,    CutType::LOW},
 			       {"H2_m",       {10,250},   10,    CutType::HIGH},
@@ -232,7 +232,7 @@ void cutOptimisationTree() {
       float scale_ttH_dl = 3000000.*0.05343/h_sum_ttH_dl->Integral();
       float scale_tH     = 3000000.*0.054157/h_sum_tH->Integral();
       float scale_tWH    = 3000000.*0.014425/h_sum_tWH->Integral();
-      
+            
       if (debug) std::cout << "Normalize...\n";
        
       // Normalize histograms
@@ -258,7 +258,7 @@ void cutOptimisationTree() {
             
       // Plot
       if (debug) std::cout << "Plot ...\n";
-      //plotSigPlot(h_bg_ttbar, h_sg_tH, cut, cutValue);
+      plotSigPlot(h_bg_ttbar, h_sg_tH, cut, cutValue);
       
       
       // Calculate significance
@@ -269,7 +269,7 @@ void cutOptimisationTree() {
       if (debug) std::cout << "Store LLR ...\n";
       y_LLR[counter]  = llr.first;
       ye_LLR[counter] = llr.second;
-      x_cut[counter]  = i;
+      x_cut[counter]  = cutValue;
       xe_cut[counter] = 0.;     
       
       // Now print the LLR
