@@ -15,7 +15,7 @@ void plotRecoComposition(TString bkg="ttbar",TString jettype="alljet", TString r
   TFile F(TString("/nfs/uiowapc/data/tHAnalysis/")+PRODUCION+"/"+bkg+".root","read");
   gROOT->cd();
 
-  TString outpath="/afs/cern.ch/user/b/benitezj/www/HGTDStudies/tHAnalysis/RecoTruthComposition";
+  TString outpath="./RecoTruthComposition";
   outpath+="_"+bkg;
   system(TString("rm -rf ")+outpath);
   system(TString("mkdir ")+outpath);
