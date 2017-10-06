@@ -47,7 +47,7 @@ void testTree() {
   TH1F *h_sg_tH     = new TH1F("h_sg_tH", "", 80, 0, 4);
    
   // Now apply the cuts
-  t_sg_tH->Draw("fabs(mostFwdLJet_eta) >> h_sg_tH", preSel);
+  t_sg_tH->Draw("fabs(mostFwdLJet_eta) >> h_sg_tH", wPreSel);
       
          
   // Histograms from the TTree
@@ -85,7 +85,7 @@ void testTree() {
   h_sg_tH_stored->SetLineColor(kBlue);
   h_sg_tH_stored->SetMarkerStyle(24);
   h_sg_tH->Draw();
-  h_sg_tH_stored->Draw("same");
+  h_sg_tH_stored->Draw("histsame");
   c.Print("test.pdf");
  
 }
