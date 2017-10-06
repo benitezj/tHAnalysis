@@ -4,6 +4,10 @@ svn co svn+ssh://svn.cern.ch/reps/atlasoff/PhysicsAnalysis/UpgradePhys/SmearingF
 
 git clone ssh://git@gitlab.cern.ch:7999/benitezj/SimpleAnalysis.git
 
+git clone ssh://git@gitlab.cern.ch:7999/sargyrop/tHBDT.git
+
+git clone ssh://git@gitlab.cern.ch:7999/sargyrop/tHFit.git
+
 cp tHAnalysis/install/PileupOverlay.cxx UpgradePerformanceFunctions/Root/PileupOverlay.cxx
 cp tHAnalysis/install/FlavourTaggingPerformanceFunctions.cxx UpgradePerformanceFunctions/Root/FlavourTaggingPerformanceFunctions.cxx
 cp tHAnalysis/install/UpgradePerformanceFunctions.h UpgradePerformanceFunctions/UpgradePerformanceFunctions/UpgradePerformanceFunctions.h  
