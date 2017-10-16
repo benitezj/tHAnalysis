@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Sample declaration
-samples=(ttbar tWH tH ttH_dilep ttH_semilep)
-#samples=(tH)
+#samples=(ttbar tWH tH ttH_dilep ttH_semilep)
+samples=(tH)
 
 # Default options
 smearing=false
@@ -16,6 +16,8 @@ ntup=""
 effScheme="PU"
 puEff=0.02
 btagOP=70
+useFlatEff=false
+flatLEff=0.0033
 
 while [[ $# > 0 ]] ; do
   arg="$1"
@@ -47,6 +49,10 @@ while [[ $# > 0 ]] ; do
     -btagOP)
     btagOP=$2
     shift ;;
+    -useFlatEff)
+    useFlatEff=true
+    flatLEff=$2
+    shift ;;    
     *)
     echo "Unknown option: $arg" 
     exit 1 ;;
@@ -132,9 +138,12 @@ for sample in "${samples[@]}" ; do
 	if [[ "$btagOP" == "85" ]] ; then
 	    smearString+=" -btagOP 85"
 	fi    
+	if [[ "$useFlatEff" == true ]] ; then
+	    smearString+=" -useFlatEff $flatLEff"
+	fi    
 	files=($(./mergeBatchOutput.sh -cM $sample $smearString))
     fi
-    
+      
   # Loop over input files and submit jobs
   job=0
   for file in "${files[@]}" ; do 
@@ -155,6 +164,8 @@ for sample in "${samples[@]}" ; do
     sed -i "s|PUEFF|$puEff|g" temp.sub
     sed -i "s|PUREJ|$purej|g" temp.sub
     sed -i "s|BTAGOP|$btagOP|g" temp.sub
+    sed -i "s|USEFLATEFF|$useFlatEff|g" temp.sub
+    sed -i "s|FLATLEFF|$flatLEff|g" temp.sub
     condor_submit temp.sub
     rm -f temp.sub
     let job=$job+1

@@ -12,7 +12,9 @@ EFFSCHEME=$9
 PUEFF=${10}
 BTAGOP=${11}
 PUREJ=${12}
-NTUPLE=${13}
+USEFLATEFF=${13}
+FLATLEFF=${14}
+NTUPLE=${15}
 
 
 filename=$(echo $file | awk 'BEGIN {FS="/"} ; {print $NF}')
@@ -56,6 +58,9 @@ else
     if [[ "$BTAGOP" == "85" ]] ; then
       dirname+="_btagOP85"
     fi  
+    if [[ "$USEFLATEFF" == true ]] ; then
+      dirname+="_flatLEff$FLATLEFF"
+    fi  
     OUTPUTDIR=$OUTPUTDIR/$dirname/$sample
 fi
 
@@ -64,7 +69,7 @@ if [ ! -d $OUTPUTDIR ] ; then
 fi
 
 # setup envionment
-source rcSetup.sh
+source "rcSetup.sh"
 
 TMDPDIR=$(mktemp -p)
 cd $TMPDIR
@@ -110,6 +115,9 @@ if [[ "$smear" == true ]] ; then
     fi
     if [[ "$BTAGOP" == "85" ]] ; then
 	smearString+=",btagOP=85"
+    fi	
+    if [[ "$USEFLATEFF" == true ]] ; then
+	smearString+=",useFlatEff=$FLATLEFF"
     fi	
 fi
 

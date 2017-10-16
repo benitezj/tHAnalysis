@@ -4,7 +4,7 @@ source ~/scripts/colors.sh
 
 checkMissing() {
   sample=$1
-  samplesdir=/usatlas/u/$USER/tHFramework/tHAnalysis/data/PathsBNL/TRUTH1
+  samplesdir=/usatlas/u/$USER/tHFramework/tHAnalysis/data/PathsBNL/TRUTH1/xrootd
   # Loop over input files
   for i in `cat $samplesdir/$sample.txt` ; do
     inname=$(echo $i | awk 'BEGIN {FS="/"} ; {print $NF}' | awk 'BEGIN {FS=".pool"} ; {print $1}')
@@ -22,7 +22,7 @@ checkFinished() {
   printf "${BLUE}Checking output files: $outputdir ...${NC}\n"
   
   samples=(ttbar ttH_dilep ttH_semilep tH tWH)
-  samplesdir=/usatlas/u/$USER/tHFramework/tHAnalysis/data/PathsBNL/TRUTH1
+  samplesdir=/usatlas/u/$USER/tHFramework/tHAnalysis/data/PathsBNL/TRUTH1/xrootd
 
   # Loop over samples and check if number of output files is as expected
   for sample in "${samples[@]}" ; do 
@@ -67,6 +67,8 @@ addPUJets=true
 effScheme="PU"
 puEff=0.02
 btagOP=70
+useFlatEff=false
+flatLEff=0.0033
 
 # Get the options
 while [[ $# > 0 ]] ; do
@@ -104,6 +106,10 @@ while [[ $# > 0 ]] ; do
     shift ;;
     -btagOP)
     btagOP=$2
+    shift ;;
+    -useFlatEff)
+    useFlatEff=true
+    flatLEff=$2
     shift ;;
     *)
     echo "Unknown option: $arg" 
@@ -146,6 +152,10 @@ else
   if [[ "$btagOP" == "85" ]] ; then
     dirname+="_btagOP85"
   fi  
+  if [[ "$useFlatEff" == true ]] ; then
+    dirname+="_flatLEff$flatLEff"
+  fi  
+  
   base_dir=/usatlas/u/$USER/tHFramework/OutputRootFiles/$dirname
 fi
 
