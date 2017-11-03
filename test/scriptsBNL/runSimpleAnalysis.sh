@@ -6,15 +6,16 @@ smear=$3
 PUJets=$4
 TC=$5
 HGTD=$6
-HGTDBTAG=$7
-BTAGSCHEME=$8
-EFFSCHEME=$9
-PUEFF=${10}
-BTAGOP=${11}
-PUREJ=${12}
-USEFLATEFF=${13}
-FLATLEFF=${14}
-NTUPLE=${15}
+HGTDscheme=$7
+HGTDBTAG=$8
+BTAGSCHEME=$9
+EFFSCHEME=${10}
+PUEFF=${11}
+BTAGOP=${12}
+PUREJ=${13}
+USEFLATEFF=${14}
+FLATLEFF=${15}
+NTUPLE=${16}
 
 
 filename=$(echo $file | awk 'BEGIN {FS="/"} ; {print $NF}')
@@ -45,7 +46,7 @@ else
 	fi
     fi 
     if [[ "$HGTD" == true ]] ; then 
-	dirname+="_HGTD"
+	dirname+="_HGTD$HGTDscheme"
 
 	if [[ "$HGTDBTAG" == true ]] ; then
 	    dirname+="_HGTDbtag_$BTAGSCHEME"
@@ -91,7 +92,7 @@ if [[ "$smear" == true ]] ; then
 	smearString+=",noTrackConfirm"
     fi
     if [[ "$HGTD" == true ]] ; then
-	smearString+=",useHGTD0"
+	smearString+=",useHGTD$HGTDscheme"
 	if [[ "$HGTDBTAG" == true ]] ; then 
 	    smearString+=",useHGTDbtag"
 	fi

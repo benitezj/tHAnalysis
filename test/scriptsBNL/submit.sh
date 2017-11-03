@@ -1,14 +1,15 @@
 #!/bin/bash
 
 # Sample declaration
-#samples=(ttbar tWH tH ttH_dilep ttH_semilep)
-samples=(tH)
+samples=(ttbar tWH tH ttH_dilep ttH_semilep)
+#samples=(tH)
 
 # Default options
 smearing=false
 addPUJets=true
 trackConfirm=true
 HGTD=false
+HGTDscheme=0 # 0 is for forward only , 1 is for central+forward
 HGTDBTAG=false
 btagscheme="lrej"
 purej=true
@@ -27,7 +28,9 @@ while [[ $# > 0 ]] ; do
     -noTC)
     trackConfirm=false ;;
     -HGTD)
-    HGTD=true ;;
+    HGTD=true 
+    HGTDscheme=$2
+    shift ;;
     -HGTDbtag)
     HGTDBTAG=true
     btagscheme=$2
@@ -121,7 +124,7 @@ for sample in "${samples[@]}" ; do
 	    smearString+=" -noTC"
 	fi
 	if [[ "$HGTD" == true ]] ; then
-	    smearString+=" -HGTD"
+	    smearString+=" -HGTD $HGTDscheme"
 
 	    if [[ "$HGTDBTAG" == true ]] ; then 
 		smearString+=" -HGTDbtag $btagscheme"
@@ -157,6 +160,7 @@ for sample in "${samples[@]}" ; do
     sed -i "s|PUJETS|$addPUJets|g" temp.sub
     sed -i "s|TC|$trackConfirm|g" temp.sub
     sed -i "s|HGTD|$HGTD|" temp.sub
+    sed -i "s|HGTDSCHEME|$HGTDscheme|" temp.sub
     sed -i "s|BTAGHGTD|$HGTDBTAG|g" temp.sub
     sed -i "s|BTAGSCHEME|$btagscheme|g" temp.sub
     sed -i "s|NTUPLE|$ntup|g" temp.sub

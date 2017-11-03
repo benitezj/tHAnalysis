@@ -60,6 +60,7 @@ checkMissing=false
 smearing=false
 trackConfirm=true
 HGTD=false
+HGTDscheme=0 # 0 is for forward only , 1 is for central+forward
 HGTDBTAG=false
 btagscheme=""
 purej=false
@@ -87,7 +88,9 @@ while [[ $# > 0 ]] ; do
     -noPUJets)
     addPUJets=false;;
     -HGTD)
-    HGTD=true ;;
+    HGTD=true 
+    HGTDscheme=$2
+    shift ;;
     -HGTDbtag)
     HGTDBTAG=true
     btagscheme=$2
@@ -138,7 +141,7 @@ else
     fi
   fi 
   if [[ "$HGTD" == true ]] ; then 
-    dirname+="_HGTD"
+    dirname+="_HGTD$HGTDscheme"
     if [[ "$HGTDBTAG" == true ]] ; then 
       dirname+="_HGTDbtag"
       if [[ "$btagscheme" != "" ]] ; then
